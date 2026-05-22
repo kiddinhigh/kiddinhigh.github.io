@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kidd OS</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --a:#00ff41;--a2:#00cc33;--a3:rgba(0,255,65,0.18);--a4:rgba(0,255,65,0.07);
+  --a-glow:rgba(0,255,65,0.55);--bg:#030a03;--bg2:rgba(5,12,5,0.97);
+  --border:rgba(0,255,65,0.28);--border2:rgba(0,255,65,0.45);
+  --text:#c8ffc8;--text2:#7ab07a;--text3:#3a6a3a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{width:100vw;height:100vh;overflow:hidden;font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);cursor:default;user-select:none;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.22);border-radius:3px;}
+
+/* ── SETUP ──────────────────────────────────────── */
+#setup-overlay{position:fixed;inset:0;z-index:99999;background:#020804;display:flex;align-items:center;justify-content:center;transition:opacity 0.8s;}
+#setup-overlay.fade-out{opacity:0;pointer-events:none;}
+.setup-card{width:460px;max-width:95vw;background:rgba(4,14,4,0.98);border:1px solid var(--border2);border-radius:12px;box-shadow:0 0 60px rgba(0,255,65,0.12),0 0 120px rgba(0,255,65,0.05);overflow:hidden;}
+.setup-head{padding:28px 28px 20px;background:var(--a4);border-bottom:1px solid rgba(0,255,65,0.15);text-align:center;}
+.setup-logo{font-family:'VT323',monospace;font-size:56px;color:var(--a);text-shadow:0 0 24px var(--a-glow);letter-spacing:4px;line-height:1;}
+.setup-sub{font-size:11px;color:var(--text3);letter-spacing:3px;margin-top:4px;}
+.setup-body{padding:24px 28px;}
+.setup-step{display:none;}.setup-step.active{display:block;}
+.setup-label{font-size:11px;color:#3a8a3a;letter-spacing:2px;margin-bottom:6px;display:block;}
+.setup-input{width:100%;background:rgba(0,255,65,0.06);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:9px 12px;border-radius:5px;outline:none;margin-bottom:14px;}
+.setup-input:focus{border-color:rgba(0,255,65,0.65);box-shadow:0 0 10px rgba(0,255,65,0.08);}
+.setup-input::placeholder{color:rgba(0,255,65,0.22);}
+.avatar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:18px;}
+.av-opt{aspect-ratio:1;border-radius:8px;border:2px solid rgba(0,255,65,0.15);background:rgba(0,255,65,0.05);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.av-opt:hover{border-color:var(--border2);background:rgba(0,255,65,0.1);}
+.av-opt.picked{border-color:var(--a);background:var(--a3);box-shadow:0 0 10px rgba(0,255,65,0.25);}
+.setup-btn{width:100%;padding:11px;background:rgba(0,255,65,0.14);border:1px solid var(--border2);color:var(--a);font-family:'VT323',monospace;font-size:22px;letter-spacing:2px;cursor:pointer;border-radius:5px;transition:all 0.2s;margin-top:4px;}
+.setup-btn:hover{background:rgba(0,255,65,0.28);box-shadow:0 0 16px rgba(0,255,65,0.28);}
+.setup-err{font-size:11px;color:#ff5555;margin-top:-10px;margin-bottom:10px;min-height:14px;}
+.boot-lines{font-size:11.5px;color:var(--text3);line-height:1.9;height:180px;overflow:hidden;margin-bottom:16px;}
+.boot-line{opacity:0;transform:translateY(4px);transition:opacity 0.3s,transform 0.3s;}
+.boot-line.show{opacity:1;transform:none;}
+.boot-line.ok::before{content:'[OK]  ';color:var(--a2);}
+.boot-line.ld::before{content:'[>>]  ';color:#aaaa00;}
+.boot-bar-wrap{height:6px;background:rgba(0,255,65,0.1);border-radius:3px;overflow:hidden;}
+.boot-bar{height:100%;width:0%;background:var(--a);border-radius:3px;transition:width 0.35s ease;box-shadow:0 0 8px var(--a-glow);}
+.boot-pct{font-size:11px;color:#3a8a3a;text-align:right;margin-top:4px;}
+.welcome-text{font-size:12.5px;color:#4a8a4a;line-height:1.8;margin-bottom:18px;text-align:center;}
+.welcome-tag{font-size:10px;color:#1a4a1a;letter-spacing:1px;text-align:center;margin-bottom:20px;}
+
+/* ── TICKER ─────────────────────────────────────── */
+#top-ticker{position:fixed;top:0;left:0;right:0;height:26px;background:rgba(0,20,0,0.96);border-bottom:1px solid rgba(0,255,65,0.22);z-index:8000;display:flex;align-items:center;overflow:hidden;}
+.ticker-tag{font-family:'VT323',monospace;font-size:15px;color:#000;background:var(--a);padding:0 10px;height:100%;display:flex;align-items:center;letter-spacing:1px;flex-shrink:0;border-right:1px solid rgba(0,255,65,0.4);}
+.ticker-scroll{flex:1;overflow:hidden;position:relative;height:100%;}
+.ticker-msg{position:absolute;inset:0;display:flex;align-items:center;padding:0 14px;font-size:12px;color:var(--text2);opacity:0;transition:opacity 0.5s;white-space:nowrap;}
+.ticker-msg.visible{opacity:1;}
+.ticker-msg .hi{color:var(--a);}
+.ticker-dot{flex-shrink:0;font-size:11px;color:#1a5a1a;padding:0 10px;border-left:1px solid rgba(0,255,65,0.15);white-space:nowrap;}
+
+/* ── MATRIX ─────────────────────────────────────── */
+#matrix-canvas{position:fixed;inset:0;opacity:0.07;pointer-events:none;z-index:0;}
+
+/* ── DESKTOP ────────────────────────────────────── */
+#desktop{position:fixed;top:26px;left:0;right:0;bottom:48px;z-index:1;}
+.desktop-icon{position:absolute;width:78px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border-radius:6px;cursor:pointer;transition:background 0.15s,transform 0.1s;}
+.desktop-icon:hover{background:rgba(0,255,65,0.13);transform:scale(1.05);}
+.desktop-icon.selected{background:rgba(0,255,65,0.22);}
+.desktop-icon .dicon{font-size:30px;filter:drop-shadow(0 0 7px var(--a-glow));}
+.desktop-icon .dlabel{font-size:10.5px;color:#d8ffd8;text-align:center;text-shadow:0 0 6px rgba(0,255,65,0.7);line-height:1.2;word-break:break-word;}
+
+/* ── CONTEXT MENU ───────────────────────────────── */
+#ctx-menu{position:fixed;z-index:99000;background:rgba(4,14,4,0.98);border:1px solid var(--border2);border-radius:7px;box-shadow:0 8px 32px rgba(0,0,0,0.8),0 0 16px rgba(0,255,65,0.1);padding:5px;min-width:180px;display:none;}
+.ctx-item{padding:8px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:9px;transition:background 0.12s;}
+.ctx-item:hover{background:rgba(0,255,65,0.12);color:var(--a);}
+.ctx-sep{height:1px;background:rgba(0,255,65,0.1);margin:4px 0;}
+
+/* ── TASKBAR ────────────────────────────────────── */
+#taskbar{position:fixed;bottom:0;left:0;right:0;height:48px;background:rgba(3,12,3,0.97);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:0 8px;z-index:9000;backdrop-filter:blur(8px);}
+#start-btn{height:34px;padding:0 14px;flex-shrink:0;background:rgba(0,255,65,0.12);border:1px solid var(--border2);color:var(--a);font-family:'VT323',monospace;font-size:19px;letter-spacing:2px;cursor:pointer;border-radius:4px;transition:all 0.15s;white-space:nowrap;}
+#start-btn:hover,#start-btn.active{background:rgba(0,255,65,0.25);box-shadow:0 0 10px rgba(0,255,65,0.35);}
+#taskbar-wins{flex:1;display:flex;gap:4px;overflow-x:auto;min-width:0;}
+#taskbar-wins::-webkit-scrollbar{height:0;}
+.tb-btn{height:34px;padding:0 11px;flex-shrink:0;background:rgba(0,255,65,0.07);border:1px solid rgba(0,255,65,0.22);color:#90d090;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;border-radius:4px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis;transition:all 0.15s;}
+.tb-btn:hover,.tb-btn.active{background:var(--a3);color:var(--a);}
+/* system tray */
+#sys-tray{display:flex;align-items:center;gap:4px;flex-shrink:0;padding-left:6px;border-left:1px solid rgba(0,255,65,0.15);}
+.tray-item{padding:4px 7px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--text3);transition:all 0.15s;white-space:nowrap;position:relative;}
+.tray-item:hover{background:rgba(0,255,65,0.1);color:var(--a);}
+.notif-badge{position:absolute;top:2px;right:2px;min-width:14px;height:14px;background:#ff4444;border-radius:7px;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;display:none;}
+.notif-badge.show{display:flex;}
+#clock{font-family:'VT323',monospace;font-size:19px;color:var(--a);text-shadow:0 0 7px var(--a-glow);padding:0 8px;white-space:nowrap;flex-shrink:0;cursor:pointer;position:relative;}
+#clock-tooltip{position:absolute;bottom:48px;right:8px;background:rgba(4,14,4,0.98);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text2);white-space:nowrap;display:none;z-index:9100;}
+
+/* ── START MENU ─────────────────────────────────── */
+#start-menu{position:fixed;bottom:48px;left:8px;width:320px;background:rgba(3,10,3,0.98);border:1px solid rgba(0,255,65,0.38);border-radius:8px 8px 0 0;box-shadow:0 -4px 28px rgba(0,255,65,0.12);z-index:9500;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom left;transition:transform 0.18s,opacity 0.18s;}
+#start-menu.open{display:flex;}
+.sm-head{padding:12px 14px;background:rgba(0,255,65,0.07);border-bottom:1px solid rgba(0,255,65,0.18);display:flex;align-items:center;gap:12px;}
+.sm-avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.35);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.sm-os{font-family:'VT323',monospace;font-size:22px;color:var(--a);letter-spacing:2px;}
+.sm-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+#sm-search{width:calc(100% - 16px);margin:8px;background:rgba(0,255,65,0.06);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:7px 10px;border-radius:5px;outline:none;}
+#sm-search:focus{border-color:var(--border2);}
+#sm-search::placeholder{color:rgba(0,255,65,0.25);}
+.sm-section{padding:4px 8px 0;font-size:9.5px;color:#1e4e1e;letter-spacing:2px;}
+.sm-grid{padding:4px 8px 8px;display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.sm-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:5px;cursor:pointer;transition:background 0.15s;}
+.sm-item:hover{background:rgba(0,255,65,0.11);}
+.sm-item .si{font-size:18px;width:22px;text-align:center;}
+.sm-item .sn{font-size:11.5px;color:#b8e8b8;}
+.sm-foot{padding:8px;border-top:1px solid rgba(0,255,65,0.18);display:flex;justify-content:space-between;gap:6px;}
+.sm-fbt{flex:1;padding:6px 8px;background:transparent;border:1px solid rgba(0,255,65,0.2);color:#5a8a5a;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;border-radius:4px;transition:all 0.15s;}
+.sm-fbt:hover{background:rgba(255,50,50,0.12);border-color:rgba(255,50,50,0.35);color:#ff7777;}
+.sm-fbt.restart:hover{background:rgba(0,150,255,0.12);border-color:rgba(0,150,255,0.35);color:#77bbff;}
+
+/* ── WINDOWS ────────────────────────────────────── */
+.window{position:absolute;background:var(--bg2);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.85),0 0 18px rgba(0,255,65,0.06);display:flex;flex-direction:column;overflow:hidden;min-width:300px;min-height:200px;transform-origin:top left;animation:winOpen 0.18s ease;}
+@keyframes winOpen{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+.window.focused{border-color:rgba(0,255,65,0.55);box-shadow:0 8px 40px rgba(0,0,0,0.85),0 0 22px rgba(0,255,65,0.13);}
+.win-titlebar{height:36px;background:rgba(0,255,65,0.07);border-bottom:1px solid rgba(0,255,65,0.18);display:flex;align-items:center;padding:0 10px;cursor:move;flex-shrink:0;gap:8px;user-select:none;}
+.win-controls{display:flex;gap:6px;}
+.wbtn{width:13px;height:13px;border-radius:50%;border:none;cursor:pointer;transition:filter 0.1s;}
+.wbtn:hover{filter:brightness(1.4);}
+.wclose{background:#ff5555;}.wmin{background:#ffaa00;}.wmax{background:#00cc44;}
+.win-title{flex:1;font-family:'VT323',monospace;font-size:17px;color:var(--a2);letter-spacing:1px;text-align:center;pointer-events:none;}
+.win-body{flex:1;overflow:auto;position:relative;}
+.win-resize{position:absolute;bottom:0;right:0;width:14px;height:14px;cursor:se-resize;z-index:2;background:linear-gradient(135deg,transparent 50%,rgba(0,255,65,0.25) 50%);}
+
+/* ── NOTIFICATIONS ──────────────────────────────── */
+#toast-container{position:fixed;bottom:60px;right:14px;z-index:99500;display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none;}
+.toast{background:rgba(4,14,4,0.97);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px;min-width:260px;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,0.7),0 0 12px rgba(0,255,65,0.08);pointer-events:auto;animation:toastIn 0.25s ease;transition:opacity 0.4s,transform 0.4s;}
+.toast.out{opacity:0;transform:translateX(20px);}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+.toast-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.toast-body{flex:1;}
+.toast-title{font-size:11px;color:var(--a);font-family:'VT323',monospace;font-size:15px;letter-spacing:1px;}
+.toast-msg{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4;}
+.toast-close{font-size:14px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:color 0.1s;}
+.toast-close:hover{color:var(--a);}
+
+/* ── NOTIFICATION PANEL ─────────────────────────── */
+#notif-panel{position:fixed;bottom:48px;right:8px;width:300px;max-height:420px;background:rgba(3,10,3,0.98);border:1px solid rgba(0,255,65,0.38);border-radius:8px 8px 0 0;z-index:9400;display:none;flex-direction:column;overflow:hidden;}
+#notif-panel.open{display:flex;}
+.np-head{padding:10px 14px;border-bottom:1px solid rgba(0,255,65,0.12);display:flex;justify-content:space-between;align-items:center;}
+.np-title{font-family:'VT323',monospace;font-size:18px;color:var(--a);letter-spacing:1px;}
+.np-clear{font-size:10px;color:var(--text3);cursor:pointer;transition:color 0.15s;}
+.np-clear:hover{color:#ff7777;}
+.np-list{flex:1;overflow-y:auto;padding:6px;}
+.np-item{padding:8px 10px;border-radius:5px;border-bottom:1px solid rgba(0,255,65,0.06);font-size:11px;color:var(--text2);}
+.np-item .np-i-head{color:var(--a2);font-size:12px;margin-bottom:2px;}
+.np-empty{padding:20px;text-align:center;font-size:11px;color:var(--text3);}
+
+/* ── APPS: SHARED ───────────────────────────────── */
+.app-bar{display:flex;align-items:center;gap:6px;padding:7px 11px;border-bottom:1px solid rgba(0,255,65,0.12);background:var(--a4);flex-shrink:0;}
+.app-btn{padding:4px 9px;background:transparent;border:1px solid rgba(0,255,65,0.22);color:#5a9a5a;font-size:11px;cursor:pointer;border-radius:4px;font-family:'Share Tech Mono',monospace;transition:all 0.15s;}
+.app-btn:hover{background:rgba(0,255,65,0.1);color:var(--a);}
+
+/* ── GAME LAUNCHER ──────────────────────────────── */
+.game-launcher{height:100%;display:flex;flex-direction:column;}
+.gl-search{flex:1;background:rgba(0,255,65,0.07);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:6px 10px;border-radius:4px;outline:none;}
+.gl-search:focus{border-color:rgba(0,255,65,0.65);}
+.gl-search::placeholder{color:rgba(0,255,65,0.28);}
+.gl-cats{display:flex;gap:4px;padding:7px 14px;overflow-x:auto;border-bottom:1px solid rgba(0,255,65,0.09);}
+.gl-cats::-webkit-scrollbar{height:0;}
+.gl-cat{padding:3px 11px;border:1px solid rgba(0,255,65,0.18);background:transparent;color:#5a9a5a;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;border-radius:20px;white-space:nowrap;transition:all 0.15s;}
+.gl-cat:hover,.gl-cat.on{background:rgba(0,255,65,0.14);color:var(--a);border-color:var(--border2);}
+.games-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;padding:12px;overflow-y:auto;align-content:start;}
+.game-card{border-radius:7px;overflow:hidden;cursor:pointer;border:1px solid rgba(0,255,65,0.13);transition:all 0.2s;background:rgba(0,15,0,0.6);}
+.game-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,255,65,0.13);}
+.game-thumb{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;overflow:hidden;}
+.game-thumb::after{content:'\25B6 PLAY';position:absolute;inset:0;background:rgba(0,255,65,0.88);color:#000;font-family:'VT323',monospace;font-size:20px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.18s;}
+.game-card:hover .game-thumb::after{opacity:1;}
+.game-info{padding:7px 8px;}
+.game-name{font-size:11px;color:#b8e8b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.game-tag{font-size:9.5px;color:#3a7a3a;margin-top:2px;}
+
+/* ── TERMINAL ───────────────────────────────────── */
+.terminal-app{height:100%;background:#000;padding:10px;font-family:'Share Tech Mono',monospace;font-size:12.5px;color:var(--a);display:flex;flex-direction:column;}
+.term-out{flex:1;overflow-y:auto;line-height:1.65;white-space:pre-wrap;}
+.term-line{display:flex;align-items:center;gap:4px;margin-top:3px;}
+.term-prompt{color:var(--a2);white-space:nowrap;font-size:12px;}
+.term-in{flex:1;background:transparent;border:none;color:var(--a);font-family:'Share Tech Mono',monospace;font-size:12.5px;outline:none;caret-color:var(--a);}
+
+/* ── FILE MANAGER ───────────────────────────────── */
+.file-manager{height:100%;display:flex;flex-direction:column;}
+.fm-path{flex:1;background:rgba(0,255,65,0.05);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:4px 8px;border-radius:4px;font-family:'Share Tech Mono',monospace;}
+.fm-body{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px;padding:10px;overflow-y:auto;align-content:start;}
+.fm-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 4px;border-radius:5px;cursor:pointer;transition:background 0.15s;}
+.fm-item:hover{background:rgba(0,255,65,0.09);}
+.fm-ic{font-size:26px;}.fm-nm{font-size:10px;color:#a8d8a8;text-align:center;line-height:1.2;word-break:break-word;}
+
+/* ── BROWSER ────────────────────────────────────── */
+.browser-app{height:100%;display:flex;flex-direction:column;}
+.br-url{flex:1;background:rgba(0,255,65,0.05);border:1px solid var(--border);color:#8ac88a;font-size:11.5px;padding:4px 9px;border-radius:4px;font-family:'Share Tech Mono',monospace;outline:none;}
+.br-url:focus{border-color:var(--border2);}
+
+/* ── CALCULATOR ─────────────────────────────────── */
+.calc-app{height:100%;display:flex;flex-direction:column;background:#000;padding:12px;gap:10px;}
+.calc-display{background:rgba(0,255,65,0.05);border:1px solid var(--border);border-radius:6px;padding:12px 14px;text-align:right;}
+.calc-expr{font-size:11px;color:var(--text3);min-height:16px;}
+.calc-val{font-family:'VT323',monospace;font-size:38px;color:var(--a);text-shadow:0 0 10px var(--a-glow);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;flex:1;}
+.calc-btn{background:rgba(0,255,65,0.07);border:1px solid rgba(0,255,65,0.18);color:var(--text2);font-family:'VT323',monospace;font-size:22px;cursor:pointer;border-radius:6px;transition:all 0.12s;display:flex;align-items:center;justify-content:center;}
+.calc-btn:hover{background:rgba(0,255,65,0.16);color:var(--a);}
+.calc-btn:active{background:rgba(0,255,65,0.28);transform:scale(0.95);}
+.calc-btn.op{background:rgba(0,255,65,0.12);color:var(--a);border-color:rgba(0,255,65,0.3);}
+.calc-btn.eq{background:rgba(0,255,65,0.3);color:#000;border-color:var(--a);}
+.calc-btn.eq:hover{background:rgba(0,255,65,0.5);}
+.calc-btn.wide{grid-column:span 2;}
+.calc-btn.clear{color:#ff7777;border-color:rgba(255,100,100,0.3);}
+
+/* ── MUSIC PLAYER ───────────────────────────────── */
+.music-app{height:100%;display:flex;flex-direction:column;background:#000;}
+.music-header{padding:16px;background:rgba(0,255,65,0.04);border-bottom:1px solid rgba(0,255,65,0.1);display:flex;align-items:center;gap:14px;}
+.music-art{width:64px;height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;border:1px solid var(--border);position:relative;overflow:hidden;}
+.music-art.playing::after{content:'';position:absolute;inset:0;background:rgba(0,255,65,0.08);animation:pulse 1s ease infinite alternate;}
+@keyframes pulse{from{opacity:0;}to{opacity:1;}}
+.music-info{flex:1;min-width:0;}
+.music-title{font-family:'VT323',monospace;font-size:20px;color:var(--a);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.music-artist{font-size:11px;color:var(--text3);margin-top:2px;}
+.music-controls{display:flex;align-items:center;justify-content:center;gap:14px;padding:12px 16px;}
+.mc-btn{background:transparent;border:1px solid rgba(0,255,65,0.22);color:var(--text2);width:36px;height:36px;border-radius:50%;font-size:15px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.mc-btn:hover{background:rgba(0,255,65,0.12);color:var(--a);}
+.mc-btn.play{width:46px;height:46px;font-size:19px;background:rgba(0,255,65,0.14);border-color:var(--border2);color:var(--a);}
+.mc-btn.play:hover{background:rgba(0,255,65,0.28);}
+.music-progress{padding:0 16px 10px;display:flex;align-items:center;gap:10px;}
+.mp-time{font-size:10px;color:var(--text3);width:32px;flex-shrink:0;}
+.mp-time.end{text-align:right;}
+.mp-bar{flex:1;height:4px;background:rgba(0,255,65,0.15);border-radius:2px;cursor:pointer;position:relative;}
+.mp-fill{height:100%;background:var(--a);border-radius:2px;transition:width 0.9s linear;pointer-events:none;}
+.mp-thumb{position:absolute;top:-4px;width:12px;height:12px;background:var(--a);border-radius:50%;transform:translateX(-50%);box-shadow:0 0 6px var(--a-glow);}
+.music-playlist{flex:1;overflow-y:auto;border-top:1px solid rgba(0,255,65,0.08);}
+.ml-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.12s;border-bottom:1px solid rgba(0,255,65,0.04);}
+.ml-item:hover{background:rgba(0,255,65,0.05);}
+.ml-item.playing{background:rgba(0,255,65,0.08);}
+.ml-num{font-size:10px;color:var(--text3);width:18px;text-align:center;flex-shrink:0;}
+.ml-info{flex:1;min-width:0;}
+.ml-title{font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ml-artist{font-size:10px;color:var(--text3);margin-top:1px;}
+.ml-dur{font-size:10px;color:var(--text3);flex-shrink:0;}
+.ml-item.playing .ml-title{color:var(--a);}
+.ml-item.playing .ml-num::before{content:'♪';color:var(--a);}
+.ml-item.playing .ml-num-txt{display:none;}
+
+/* ── SETTINGS ───────────────────────────────────── */
+.settings-app{height:100%;display:flex;}
+.set-nav{width:150px;border-right:1px solid rgba(0,255,65,0.12);padding:8px;flex-shrink:0;}
+.set-nav-item{padding:8px 10px;border-radius:4px;cursor:pointer;font-size:11.5px;color:#6a9a6a;transition:all 0.15s;display:flex;align-items:center;gap:7px;}
+.set-nav-item:hover,.set-nav-item.on{background:rgba(0,255,65,0.09);color:var(--a);}
+.set-body{flex:1;padding:14px;overflow-y:auto;}
+.set-title{font-family:'VT323',monospace;font-size:21px;color:var(--a2);margin-bottom:14px;border-bottom:1px solid rgba(0,255,65,0.13);padding-bottom:7px;letter-spacing:1px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(0,255,65,0.05);}
+.set-lbl{font-size:12.5px;color:#a8d8a8;}.set-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.toggle{width:38px;height:20px;background:rgba(0,255,65,0.12);border:1px solid var(--border);border-radius:10px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;}
+.toggle.on{background:rgba(0,255,65,0.45);border-color:var(--a);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#3a6a3a;transition:transform 0.2s,background 0.2s;}
+.toggle.on::after{transform:translateX(18px);background:var(--a);}
+.theme-swatches{display:flex;gap:8px;margin-top:6px;}
+.theme-sw{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.theme-sw:hover,.theme-sw.on{border-color:#fff;transform:scale(1.1);}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup-overlay">
+  <canvas id="setup-canvas" style="position:absolute;inset:0;opacity:0.06;pointer-events:none;"></canvas>
+  <div class="setup-card">
+    <div class="setup-head"><div class="setup-logo">KIDD OS</div><div class="setup-sub">SYSTEM SETUP // v1.0.0</div></div>
+    <div class="setup-body">
+      <div class="setup-step active" id="s1">
+        <div class="welcome-text">Welcome to <span style="color:var(--a)">Kidd OS</span> —<br>spun off from <span style="color:var(--a2)">kiddinclass</span>.<br>Let's get you set up.</div>
+        <div class="welcome-tag">// FIRST BOOT // SETUP WIZARD //</div>
+        <button class="setup-btn" onclick="goStep(2)">▶ BEGIN SETUP</button>
+      </div>
+      <div class="setup-step" id="s2">
+        <label class="setup-label">// CHOOSE YOUR USERNAME</label>
+        <input class="setup-input" id="inp-user" placeholder="enter username..." maxlength="20" autocomplete="off">
+        <label class="setup-label">// SET A PASSWORD</label>
+        <input class="setup-input" id="inp-pass" type="password" placeholder="enter password..." maxlength="32">
+        <label class="setup-label">// PICK YOUR AVATAR</label>
+        <div class="avatar-grid" id="av-grid"></div>
+        <div class="setup-err" id="s2-err"></div>
+        <button class="setup-btn" onclick="submitAccount()">CREATE ACCOUNT →</button>
+      </div>
+      <div class="setup-step" id="s3">
+        <div class="boot-lines" id="boot-lines"></div>
+        <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
+        <div class="boot-pct" id="boot-pct">0%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div id="top-ticker" style="display:none;">
+  <div class="ticker-tag">KIDD OS</div>
+  <div class="ticker-scroll"><div class="ticker-msg" id="tick-a"></div><div class="ticker-msg" id="tick-b"></div></div>
+  <div class="ticker-dot" id="tick-user"></div>
+</div>
+
+<!-- MATRIX -->
+<canvas id="matrix-canvas"></canvas>
+
+<!-- DESKTOP -->
+<div id="desktop" style="display:none;"></div>
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="ctxAction('games')"><span>🎮</span> Open Games</div>
+  <div class="ctx-item" onclick="ctxAction('term')"><span>💻</span> Open Terminal</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('theme')"><span>🎨</span> Change Theme</div>
+  <div class="ctx-item" onclick="ctxAction('refresh')"><span>↺</span> Refresh Desktop</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxAction('about')"><span>🖥️</span> About Kidd OS</div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notif-panel">
+  <div class="np-head"><span class="np-title">NOTIFICATIONS</span><span class="np-clear" onclick="clearNotifs()">Clear all</span></div>
+  <div class="np-list" id="np-list"><div class="np-empty">No notifications yet</div></div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- START MENU -->
+<div id="start-menu">
+  <div class="sm-head">
+    <div class="sm-avatar" id="sm-avatar">👤</div>
+    <div><div class="sm-os" id="sm-username">USER</div><div class="sm-sub">Kidd OS v1.0 // online</div></div>
+  </div>
+  <input id="sm-search" placeholder="🔍 Search apps..." oninput="filterSmApps(this.value)">
+  <div class="sm-section">APPS</div>
+  <div class="sm-grid" id="sm-grid"></div>
+  <div class="sm-foot">
+    <button class="sm-fbt" onclick="doShutdown()">⏻ Shut Down</button>
+    <button class="sm-fbt restart" onclick="doRestart()">↺ Restart</button>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar" style="display:none;">
+  <button id="start-btn" onclick="toggleStart()">⬡ KIDD OS</button>
+  <div id="taskbar-wins"></div>
+  <div id="sys-tray">
+    <div class="tray-item" id="tray-wifi" title="WiFi">📶</div>
+    <div class="tray-item" id="tray-battery" title="Battery">🔋</div>
+    <div class="tray-item" onclick="toggleNotifPanel()" title="Notifications" style="position:relative;">🔔<div class="notif-badge" id="notif-badge">0</div></div>
+  </div>
+  <div id="clock" onclick="toggleClockTip()"></div>
+  <div id="clock-tooltip"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   GLOBALS
+══════════════════════════════════════ */
+let acctUser='', chosenAvatar='🎮';
+const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*アイウエオカキクケコサシスセ';
+
+/* ══════════════════════════════════════
+   SETUP RAIN
+══════════════════════════════════════ */
+const scv=document.getElementById('setup-canvas'),scx=scv.getContext('2d');
+function rsz(){scv.width=innerWidth;scv.height=innerHeight;}rsz();addEventListener('resize',rsz);
+let sD=Array.from({length:Math.floor(innerWidth/13)},()=>Math.random()*-60);
+const sRain=setInterval(()=>{
+  scx.fillStyle='rgba(2,8,4,0.05)';scx.fillRect(0,0,scv.width,scv.height);
+  scx.fillStyle='#00ff41';scx.font="13px 'Share Tech Mono',monospace";
+  sD.forEach((y,i)=>{scx.globalAlpha=Math.random()*0.4+0.06;scx.fillText(CHARS[Math.floor(Math.random()*CHARS.length)],i*13,y*13);if(y*13>scv.height&&Math.random()>0.975)sD[i]=0;sD[i]++;});
+  scx.globalAlpha=1;
+},55);
+
+/* ══════════════════════════════════════
+   SETUP LOGIC
+══════════════════════════════════════ */
+const AVATARS=['🐸','🤖','💀','👽','🦊','🐺','🐲','⚡','🔥','🎮','💎','🗿','🦅','🌀','🎯','🧠','👾','🦁','🐉','🌙','☠️','🔮'];
+const avGrid=document.getElementById('av-grid');
+AVATARS.forEach((a,i)=>{
+  const d=document.createElement('div');d.className='av-opt'+(i===9?' picked':'');
+  d.textContent=a;if(i===9)chosenAvatar=a;
+  d.onclick=()=>{document.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('picked'));d.classList.add('picked');chosenAvatar=a;};
+  avGrid.appendChild(d);
+});
+function goStep(n){document.querySelectorAll('.setup-step').forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');}
+
+function submitAccount(){
+  const u=document.getElementById('inp-user').value.trim();
+  const p=document.getElementById('inp-pass').value;
+  const err=document.getElementById('s2-err');
+  if(!u){err.textContent='Username cannot be empty SON 💔';return;}
+  if(u.length<3){err.textContent='Too short bro. 3 chars minimum fr.';return;}
+  if(!p){err.textContent='Password required. Protect yourself king 🔒';return;}
+  if(p.length<4){err.textContent='bro really tried 3 chars. needs 4+ 💀';return;}
+  err.textContent='';acctUser=u;goStep(3);runBoot();
+}
+
+const bootMsgs=[
+  {t:'Initializing Kidd OS kernel...',cl:'ld'},
+  {t:'Loading matrix renderer...',cl:'ok'},
+  {t:'Mounting file system...',cl:'ok'},
+  {t:'Checking if Ninety01 reposted anything new... (they did)',cl:'ok'},
+  {t:'SON 💔 detected in memory. Running grief.exe...',cl:'ld'},
+  {t:'grief.exe crashed. SON 💔 too powerful.',cl:'ld'},
+  {t:'Telling Irvin to get off the games... no response.',cl:'ld'},
+  {t:'IRVIN STILL ON THE GAMES. Escalating to toast notification.',cl:'ld'},
+  {t:'Loading Iceman profile... was nice. now hot and cold. SYFM 💔',cl:'ok'},
+  {t:'Verifying brain rot integrity... immaculate.',cl:'ok'},
+  {t:'Loading game launcher assets...',cl:'ok'},
+  {t:'Starting notification daemon...',cl:'ok'},
+  {t:'Music player ready...',cl:'ok'},
+  {t:'USER_PLACEHOLDER. Booting desktop...',cl:'ok'},
+];
+
+function runBoot(){
+  const lEl=document.getElementById('boot-lines'),bar=document.getElementById('boot-bar'),pct=document.getElementById('boot-pct');
+  let i=0;
+  function next(){
+    if(i>=bootMsgs.length){setTimeout(launchDesktop,400);return;}
+    const txt=bootMsgs[i].t.replace('USER_PLACEHOLDER',`Welcome, ${acctUser}.`);
+    const line=document.createElement('div');line.className=`boot-line ${bootMsgs[i].cl}`;line.textContent=txt;
+    lEl.appendChild(line);setTimeout(()=>line.classList.add('show'),20);lEl.scrollTop=lEl.scrollHeight;
+    const p=Math.round(((i+1)/bootMsgs.length)*100);bar.style.width=p+'%';pct.textContent=p+'%';
+    i++;setTimeout(next,260+Math.random()*160);
+  }next();
+}
+
+function launchDesktop(){
+  clearInterval(sRain);
+  const ov=document.getElementById('setup-overlay');ov.classList.add('fade-out');
+  setTimeout(()=>{
+    ov.style.display='none';
+    document.getElementById('sm-username').textContent=acctUser.toUpperCase();
+    document.getElementById('sm-avatar').textContent=chosenAvatar;
+    document.getElementById('tick-user').textContent=`${chosenAvatar} ${acctUser}`;
+    document.getElementById('top-ticker').style.display='flex';
+    document.getElementById('desktop').style.display='block';
+    document.getElementById('taskbar').style.display='flex';
+    startMatrixRain();tickClock();setInterval(tickClock,1000);
+    buildDesktopIcons();buildStartMenu();startTicker();
+    startSystemTray();startToastScheduler();
+    setTimeout(()=>openApp('games'),600);
+    setTimeout(()=>fireToast('💔','SON ALERT','System booted. Irvin still on the games.'),3000);
+  },800);
+}
+
+/* ══════════════════════════════════════
+   TICKER
+══════════════════════════════════════ */
+const QUOTES=[
+  {msg:'SON 💔',em:'💔'},
+  {msg:'Ninety01 reposted ANOTHER one. bro repost ANYTHING.',em:'🔁'},
+  {msg:'Iceman was a nice man now he hot and cold SYFM 💔',em:'🧊'},
+  {msg:'IRVIN GET OFF THE GAMES BRO',em:'🎮'},
+  {msg:'bro is NOT him',em:'💀'},
+  {msg:'SON what was THAT 💔',em:'💔'},
+  {msg:'Ninety01 really said "let me repost this too" and it was a SLIDESHOW',em:'🔁'},
+  {msg:'Irvin said 5 more minutes 47 minutes ago',em:'⏰'},
+  {msg:'Iceman really switched up like that. we are NOT okay.',em:'🧊'},
+  {msg:'SON 💔 why did you do that',em:'💔'},
+  {msg:'chat... am I cooked rn',em:'😭'},
+  {msg:'Ninety01 scroll timeline is literally just reposts at this point',em:'🔁'},
+  {msg:'IRVIN THE SQUAD IS WAITING. PUT THE CONTROLLER DOWN.',em:'🎮'},
+  {msg:'he said lemme cook... he did NOT cook',em:'🍳'},
+  {msg:'Iceman said "trust me bro" and then was immediately untrustworthy',em:'🧊'},
+  {msg:'bro fell off no printer just fax',em:'📠'},
+  {msg:'SON 💔 I am NOT recovering from that',em:'💔'},
+  {msg:'Ninety01 reposted that same video TWICE in one day. accountability.',em:'🔁'},
+  {msg:'Irvin said he\'s not on games. his gamertag is literally active rn.',em:'🎮'},
+  {msg:'Iceman was a NICE MAN. key word: WAS. SYFM.',em:'🧊'},
+  {msg:'we are SO back (we were never back)',em:'📉'},
+  {msg:'type shi type shi type shi',em:'⌨️'},
+  {msg:'bro said "I\'m him" and was not him 💔',em:'🪞'},
+  {msg:'Ninety01: *opens TikTok* *immediately reposts first thing*',em:'🔁'},
+  {msg:'IRVIN!!! GET. OFF. THE. GAMES!!!',em:'🎮'},
+  {msg:'biggest W of the century no debate',em:'🏆'},
+  {msg:'Iceman we trusted you bro. we actually trusted you.',em:'🧊'},
+  {msg:'SON 💔 bro really said that to me specifically',em:'💔'},
+  {msg:'brain is fully rotted. desktop is clean tho.',em:'🧠'},
+  {msg:'Ninety01 repost speed is genuinely faster than my wifi',em:'🔁'},
+  {msg:'it\'s joever (it\'s not joever)',em:'🔄'},
+  {msg:'Irvin I can see your ping in the lobby BRO',em:'🎮'},
+  {msg:'Iceman was literally the nicest. now he cold. now he hot. make it make sense.',em:'🧊'},
+  {msg:'SON 💔 on sight',em:'💔'},
+];
+let tickIdx=0,tickActive='a';
+function startTicker(){
+  const ta=document.getElementById('tick-a'),tb=document.getElementById('tick-b');
+  const q=QUOTES[0];ta.innerHTML=`<span class="hi">${q.em}</span>&nbsp;&nbsp;${q.msg}`;ta.classList.add('visible');tickIdx=1;
+  setInterval(()=>{
+    const nxt=QUOTES[tickIdx%QUOTES.length];
+    const inc=tickActive==='a'?tb:ta,out=tickActive==='a'?ta:tb;
+    inc.innerHTML=`<span class="hi">${nxt.em}</span>&nbsp;&nbsp;${nxt.msg}`;
+    out.classList.remove('visible');setTimeout(()=>inc.classList.add('visible'),300);
+    tickActive=tickActive==='a'?'b':'a';tickIdx++;
+  },5500);
+}
+
+/* ══════════════════════════════════════
+   MATRIX RAIN
+══════════════════════════════════════ */
+function startMatrixRain(){
+  const cv=document.getElementById('matrix-canvas'),cx=cv.getContext('2d');
+  function rsz2(){cv.width=innerWidth;cv.height=innerHeight;}rsz2();addEventListener('resize',rsz2);
+  let drops=Array.from({length:Math.floor(innerWidth/13)},()=>Math.random()*-80);
+  setInterval(()=>{
+    cx.fillStyle='rgba(3,10,3,0.05)';cx.fillRect(0,0,cv.width,cv.height);
+    cx.fillStyle='#00ff41';cx.font="13px 'Share Tech Mono',monospace";
+    drops.forEach((y,i)=>{cx.globalAlpha=Math.random()*0.45+0.08;cx.fillText(CHARS[Math.floor(Math.random()*CHARS.length)],i*13,y*13);if(y*13>cv.height&&Math.random()>0.975)drops[i]=0;drops[i]++;});
+    cx.globalAlpha=1;
+  },55);
+}
+
+/* ══════════════════════════════════════
+   CLOCK + DATE TOOLTIP
+══════════════════════════════════════ */
+function tickClock(){
+  const n=new Date();
+  const h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+  const clkEl=document.getElementById('clock');
+  if(!clkEl.childNodes[0]||clkEl.childNodes[0].nodeType!==Node.TEXT_NODE)clkEl.prepend(`${h}:${m}:${s}`);
+  else clkEl.childNodes[0].nodeValue=`${h}:${m}:${s}`;
+  const tip=document.getElementById('clock-tooltip');
+  if(tip.style.display==='block'){const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const months=['January','February','March','April','May','June','July','August','September','October','November','December'];tip.textContent=`${days[n.getDay()]}, ${months[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;}
+}
+function toggleClockTip(){const t=document.getElementById('clock-tooltip');t.style.display=t.style.display==='block'?'none':'block';}
+document.addEventListener('click',e=>{if(!e.target.closest('#clock'))document.getElementById('clock-tooltip').style.display='none';});
+
+/* ══════════════════════════════════════
+   SYSTEM TRAY
+══════════════════════════════════════ */
+function startSystemTray(){
+  // Fake wifi cycling
+  const wifis=['📶','📶','📶'];let wi=0;
+  setInterval(()=>{document.getElementById('tray-wifi').textContent=wifis[wi%wifis.length];wi++;},8000);
+  // Fake battery draining slowly
+  let batt=87;
+  setInterval(()=>{
+    batt=Math.max(5,batt-(Math.random()>0.7?1:0));
+    const icon=batt>60?'🔋':batt>20?'🪫':'🔴';
+    document.getElementById('tray-battery').textContent=icon;
+    document.getElementById('tray-battery').title=`Battery: ${batt}%`;
+  },30000);
+}
+
+/* ══════════════════════════════════════
+   TOASTS + NOTIFICATION CENTER
+══════════════════════════════════════ */
+let notifCount=0;
+const notifHistory=[];
+const TOAST_MSGS=[
+  {icon:'💔',title:'ts is corny',msg:"yo this is corny asf ngl"},
+  {icon:'😡',title:'0 FOIDS',msg:"NO FOIDS ALLOWED."},
+  {icon:'🥀',title:'wrap it up',msg:"Wrap it up its time for lunch."},
+  {icon:'🧊',title:'ICEMAN was ahh',msg:"Iceman was a nice man. now he hot and cold. SYFM 💔"},
+  {icon:'❓',title:'who is this',msg:"who is he?"},
+  {icon:'🔁',title:'NINETY01',msg:"Ninety01 reposting anything"},
+  {icon:'💔',title:'stop',msg:"stop talking please."},
+  {icon:'🎮',title:'annotate',msg:"slime jordhy he got annotate blocked"},
+  {icon:'😡',title:'OI',msg:"OFF THE GAMES."},
+  {icon:'🗿',title:'aura of t',msg:"Tikiiii tiki tikiii"},
+  {icon:'🪳',title:'New DM from Black Death',msg:"I LOVE THE TASTE OF IRON."},
+  {icon:'💔',title:'SAY WALLAHI',msg:"say wallahi bro say wallahi"},
+  {icon:'🎮',title:'IRVIN',msg:"Irvin did it."},
+  {icon:'🧠',title:'hmmm.',msg:"1 day or day 1?"},
+  {icon:'💔',title:'PLEASE',msg:"someone tell her stop screaming"},
+  {icon:'😡',title:'WHATTT',msg:"HOW DID HE NOT GET A BREACH????"},
+];
+function fireToast(icon,title,msg){
+  notifCount++;notifHistory.unshift({icon,title,msg,time:new Date().toLocaleTimeString()});
+  const badge=document.getElementById('notif-badge');badge.textContent=notifCount>9?'9+':notifCount;badge.classList.add('show');
+  const tc=document.getElementById('toast-container');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<div class="toast-icon">${icon}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><div class="toast-close" onclick="dismissToast(this.closest('.toast'))">✕</div>`;
+  tc.appendChild(t);updateNotifPanel();
+  setTimeout(()=>dismissToast(t),6000);
+}
+function dismissToast(t){if(!t||!t.parentNode)return;t.classList.add('out');setTimeout(()=>t.remove(),400);}
+function startToastScheduler(){
+  setInterval(()=>{
+    const m=TOAST_MSGS[Math.floor(Math.random()*TOAST_MSGS.length)];
+    fireToast(m.icon,m.title,m.msg);
+  },35000);
+}
+function toggleNotifPanel(){
+  const p=document.getElementById('notif-panel');
+  const open=p.classList.contains('open');
+  p.classList.toggle('open',!open);
+  if(!open){notifCount=0;document.getElementById('notif-badge').textContent='0';document.getElementById('notif-badge').classList.remove('show');}
+  document.getElementById('start-menu').style.display='none';
+}
+function clearNotifs(){notifHistory.length=0;updateNotifPanel();}
+function updateNotifPanel(){
+  const list=document.getElementById('np-list');
+  if(!notifHistory.length){list.innerHTML='<div class="np-empty">No notifications yet</div>';return;}
+  list.innerHTML=notifHistory.slice(0,15).map(n=>`<div class="np-item"><div class="np-i-head">${n.icon} ${n.title} <span style="color:var(--text3);font-size:9px;float:right">${n.time}</span></div>${n.msg}</div>`).join('');
+}
+document.addEventListener('click',e=>{if(!e.target.closest('#notif-panel')&&!e.target.closest('#sys-tray'))document.getElementById('notif-panel').classList.remove('open');});
+
+/* ══════════════════════════════════════
+   APPS + DESKTOP ICONS
+══════════════════════════════════════ */
+const APPS=[
+  {id:'games',  name:'Game Launcher',icon:'🎮',w:820,h:560},
+  {id:'files',  name:'File Explorer', icon:'📁',w:640,h:460},
+  {id:'term',   name:'Terminal',      icon:'💻',w:580,h:400},
+  {id:'browser',name:'Browser',       icon:'🌐',w:700,h:500},
+  {id:'notes',  name:'Notepad',       icon:'📝',w:520,h:420},
+  {id:'calc',   name:'Calculator',    icon:'🧮',w:300,h:430},
+  {id:'music',  name:'Music Player',  icon:'🎵',w:360,h:540},
+  {id:'settings',name:'Settings',     icon:'⚙️',w:540,h:440},
+  {id:'about',  name:'About Kidd OS', icon:'🖥️',w:420,h:330},
+];
+
+function buildDesktopIcons(){
+  const desk=document.getElementById('desktop');
+  APPS.forEach((app,i)=>{
+    const ic=document.createElement('div');ic.className='desktop-icon';
+    ic.dataset.id=app.id;
+    ic.style.left='16px';ic.style.top=(i*90+16)+'px';
+    ic.innerHTML=`<div class="dicon">${app.icon}</div><div class="dlabel">${app.name}</div>`;
+    ic.ondblclick=()=>openApp(app.id);
+    ic.onclick=e=>{e.stopPropagation();document.querySelectorAll('.desktop-icon').forEach(x=>x.classList.remove('selected'));ic.classList.add('selected');};
+    makeDraggableIcon(ic);
+    desk.appendChild(ic);
+  });
+  desk.onclick=()=>document.querySelectorAll('.desktop-icon').forEach(x=>x.classList.remove('selected'));
+  // Right-click on desktop
+  desk.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY);});
+}
+
+function makeDraggableIcon(ic){
+  let dragging=false,sx,sy,ox,oy,moved=false;
+  ic.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    sx=e.clientX;sy=e.clientY;ox=parseInt(ic.style.left)||0;oy=parseInt(ic.style.top)||0;
+    moved=false;
+    const mm=e2=>{
+      const dx=e2.clientX-sx,dy=e2.clientY-sy;
+      if(!dragging&&(Math.abs(dx)>4||Math.abs(dy)>4)){dragging=true;ic.style.opacity='0.7';ic.style.zIndex='500';}
+      if(dragging){moved=true;ic.style.left=Math.max(0,ox+dx)+'px';ic.style.top=Math.max(0,oy+dy)+'px';}
+    };
+    const mu=()=>{
+      if(dragging){ic.style.opacity='1';ic.style.zIndex='';dragging=false;}
+      removeEventListener('mousemove',mm);removeEventListener('mouseup',mu);
+    };
+    addEventListener('mousemove',mm);addEventListener('mouseup',mu);
+  });
+}
+
+/* Context menu */
+function showCtxMenu(x,y){
+  const m=document.getElementById('ctx-menu');m.style.display='block';
+  const mw=180,mh=160;
+  m.style.left=Math.min(x,innerWidth-mw-10)+'px';
+  m.style.top=Math.min(y,innerHeight-mh-60)+'px';
+}
+function hideCtxMenu(){document.getElementById('ctx-menu').style.display='none';}
+document.addEventListener('click',hideCtxMenu);
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('#desktop')&&!e.target.closest('.desktop-icon'))hideCtxMenu();});
+function ctxAction(a){
+  hideCtxMenu();
+  if(a==='games'||a==='term'||a==='about')openApp(a);
+  else if(a==='theme')openApp('settings');
+  else if(a==='refresh')fireToast('↺','Desktop','Desktop refreshed. W move.');
+}
+
+/* ══════════════════════════════════════
+   START MENU
+══════════════════════════════════════ */
+function buildStartMenu(){
+  const grid=document.getElementById('sm-grid');grid.innerHTML='';
+  APPS.forEach(app=>{
+    const el=document.createElement('div');el.className='sm-item';el.dataset.name=app.name.toLowerCase();
+    el.innerHTML=`<span class="si">${app.icon}</span><span class="sn">${app.name}</span>`;
+    el.onclick=()=>{openApp(app.id);closeStart();};
+    grid.appendChild(el);
+  });
+}
+function filterSmApps(q){
+  document.querySelectorAll('#sm-grid .sm-item').forEach(el=>{el.style.display=el.dataset.name.includes(q.toLowerCase())?'':'none';});
+}
+function toggleStart(){
+  const m=document.getElementById('start-menu'),b=document.getElementById('start-btn');
+  const isOpen=m.style.display==='flex';
+  m.style.display=isOpen?'none':'flex';b.classList.toggle('active',!isOpen);
+  if(!isOpen){document.getElementById('sm-search').value='';filterSmApps('');document.getElementById('sm-search').focus();}
+  document.getElementById('notif-panel').classList.remove('open');
+}
+function closeStart(){document.getElementById('start-menu').style.display='none';document.getElementById('start-btn').classList.remove('active');}
+document.addEventListener('click',e=>{if(!e.target.closest('#start-menu')&&!e.target.closest('#start-btn'))closeStart();});
+
+function doShutdown(){
+  document.body.style.transition='opacity 1s';document.body.style.opacity='0';
+  setTimeout(()=>{document.body.innerHTML='<div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#000;font-family:VT323,monospace;font-size:22px;color:#00ff41;text-shadow:0 0 12px #00ff41;text-align:center;padding:20px;">SYSTEM HALTED<br/>KIDD OS SHUTDOWN COMPLETE<br/><span style="font-size:16px;color:#1a5a1a;margin-top:12px;display:block;">Irvin is STILL on the games.<br/>Ninety01 reposted twice during shutdown.<br/>SON 💔</span><br/><span style="font-size:14px;color:#0a5a0a;margin-top:8px;display:block;">Refresh page to restart</span></div>';document.body.style.opacity='1';},1000);
+}
+function doRestart(){document.body.style.transition='opacity 0.5s';document.body.style.opacity='0';setTimeout(()=>location.reload(),600);}
+
+/* ══════════════════════════════════════
+   WINDOW ENGINE
+══════════════════════════════════════ */
+let zz=100;const wins={},maxed={};
+function openApp(id){
+  if(wins[id]){const w=wins[id];if(w.dataset.min==='1'){w.style.display='flex';w.dataset.min='0';}focusWin(w,id);return;}
+  const app=APPS.find(a=>a.id===id);if(!app)return;
+  const desk=document.getElementById('desktop');
+  const w=document.createElement('div');w.className='window focused';
+  w.style.cssText=`width:${app.w}px;height:${app.h}px;left:${80+Math.random()*180}px;top:${40+Math.random()*80}px;z-index:${++zz};display:flex;`;
+  w.innerHTML=`<div class="win-titlebar"><div class="win-controls"><button class="wbtn wclose"></button><button class="wbtn wmin"></button><button class="wbtn wmax"></button></div><div class="win-title">${app.icon} ${app.name.toUpperCase()}</div><div style="width:48px;"></div></div><div class="win-body" style="height:calc(100% - 36px);"></div><div class="win-resize"></div>`;
+  w.querySelector('.wclose').onclick=e=>{e.stopPropagation();killWin(id,w);};
+  w.querySelector('.wmin').onclick=e=>{e.stopPropagation();minWin(id,w);};
+  w.querySelector('.wmax').onclick=e=>{e.stopPropagation();maxWin(id,w);};
+  makeDrag(w,w.querySelector('.win-titlebar'));makeResize(w,w.querySelector('.win-resize'));
+  w.addEventListener('mousedown',()=>focusWin(w,id));
+  buildApp(id,w.querySelector('.win-body'));
+  desk.appendChild(w);wins[id]=w;addTbBtn(id,app);focusWin(w,id);
+}
+function focusWin(w,id){document.querySelectorAll('.window').forEach(x=>x.classList.remove('focused'));w.classList.add('focused');w.style.zIndex=++zz;document.querySelectorAll('.tb-btn').forEach(x=>x.classList.remove('active'));document.querySelector(`.tb-btn[data-id="${id}"]`)?.classList.add('active');}
+function killWin(id,w){w.style.animation='winClose 0.15s ease forwards';setTimeout(()=>{w.remove();delete wins[id];delete maxed[id];document.querySelector(`.tb-btn[data-id="${id}"]`)?.remove();},150);}
+function minWin(id,w){w.style.display='none';w.dataset.min='1';document.querySelector(`.tb-btn[data-id="${id}"]`)?.classList.remove('active');}
+function maxWin(id,w){
+  if(maxed[id]){const s=maxed[id];w.style.left=s.l;w.style.top=s.t;w.style.width=s.w;w.style.height=s.h;delete maxed[id];}
+  else{maxed[id]={l:w.style.left,t:w.style.top,w:w.style.width,h:w.style.height};w.style.left='0';w.style.top='0';w.style.width='100%';w.style.height=(innerHeight-74)+'px';}
+}
+function addTbBtn(id,app){
+  const b=document.createElement('button');b.className='tb-btn active';b.dataset.id=id;b.textContent=`${app.icon} ${app.name}`;
+  b.onclick=()=>{const w=wins[id];if(!w)return;if(w.dataset.min==='1'){w.style.display='flex';w.dataset.min='0';focusWin(w,id);}else if(w.classList.contains('focused')){minWin(id,w);}else{focusWin(w,id);}};
+  document.getElementById('taskbar-wins').appendChild(b);
+}
+function makeDrag(w,handle){
+  let sx,sy,sl,st;
+  handle.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('wbtn'))return;
+    sx=e.clientX;sy=e.clientY;sl=parseInt(w.style.left)||0;st=parseInt(w.style.top)||0;
+    const mv=e2=>{w.style.left=Math.max(0,sl+e2.clientX-sx)+'px';w.style.top=Math.max(0,Math.min(innerHeight-80,st+e2.clientY-sy))+'px';};
+    const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);};
+    addEventListener('mousemove',mv);addEventListener('mouseup',up);e.preventDefault();
+  });
+}
+function makeResize(w,handle){
+  handle.addEventListener('mousedown',e=>{
+    const sx=e.clientX,sy=e.clientY,sw=w.offsetWidth,sh=w.offsetHeight;
+    const mv=e2=>{w.style.width=Math.max(300,sw+e2.clientX-sx)+'px';w.style.height=Math.max(200,sh+e2.clientY-sy)+'px';};
+    const up=()=>{removeEventListener('mousemove',mv);removeEventListener('mouseup',up);};
+    addEventListener('mousemove',mv);addEventListener('mouseup',up);e.preventDefault();e.stopPropagation();
+  });
+}
+// Close style for kill animation
+document.head.insertAdjacentHTML('beforeend','<style>@keyframes winClose{to{opacity:0;transform:scale(0.88);}}</style>');
+
+/* ══════════════════════════════════════
+   APP BUILDERS
+══════════════════════════════════════ */
+function buildApp(id,c){
+  const map={games:buildGames,files:buildFiles,term:buildTerm,browser:buildBrowser,notes:buildNotes,calc:buildCalc,music:buildMusic,settings:buildSettings,about:buildAbout};
+  if(map[id])map[id](c);
+}
+
+/* ── GAMES ── */
+const GAMES=[
+  {n:'Minecraft Classic',e:'⛏️',t:'Adventure',c:'#0d2a10'},
+  {n:'Shell Shockers',e:'🥚',t:'Shooter',c:'#0a1525'},
+  {n:'Slope',e:'🔺',t:'Arcade',c:'#0a0a28'},
+  {n:'Bloxd.io',e:'🧱',t:'Sandbox',c:'#200a0a'},
+  {n:'Krunker.io',e:'🎯',t:'FPS',c:'#0a1e1e'},
+  {n:'Run 3',e:'👟',t:'Runner',c:'#100a25'},
+  {n:'Retro Bowl',e:'🏈',t:'Sports',c:'#1e100a'},
+  {n:'1v1.LOL',e:'🏗️',t:'Battle',c:'#0a1e0a'},
+  {n:'Cookie Clicker',e:'🍪',t:'Idle',c:'#201508'},
+  {n:'Paper.io 2',e:'📄',t:'Strategy',c:'#081515'},
+  {n:'Drift Boss',e:'🚗',t:'Racing',c:'#180808'},
+  {n:'Moto X3M',e:'🏍️',t:'Racing',c:'#081508'},
+  {n:'Geometry Dash',e:'💎',t:'Rhythm',c:'#0f0020'},
+  {n:'OvO',e:'🧪',t:'Arcade',c:'#001a10'},
+  {n:'Smash Karts',e:'🔫',t:'Racing',c:'#1a000a'},
+  {n:'Wordle',e:'📝',t:'Puzzle',c:'#001018'},
+  {n:'Friday Night Funkin',e:'🎵',t:'Rhythm',c:'#150015'},
+  {n:'Among Us Online',e:'👨‍🚀',t:'Social',c:'#100800'},
+];
+const CATS=['All','Arcade','Shooter','FPS','Racing','Rhythm','Puzzle','Sports','Adventure','Sandbox','Strategy','Social','Idle','Runner','Battle'];
+function buildGames(el){
+  el.innerHTML=`<div class="game-launcher"><div class="app-bar"><input class="gl-search" id="gl-s" placeholder="🔍  Search ${GAMES.length} games..."><span style="font-size:10px;color:var(--text3)">${GAMES.length} games</span></div><div class="gl-cats">${CATS.map((c,i)=>`<button class="gl-cat${i===0?' on':''}" data-c="${c}">${c}</button>`).join('')}</div><div class="games-grid" id="gl-grid">${GAMES.map(g=>`<div class="game-card" data-t="${g.t}" data-n="${g.n}" onclick="alert('🎮 Launching '+this.dataset.n+'...')"><div class="game-thumb" style="background:linear-gradient(135deg,${g.c},#001200)">${g.e}</div><div class="game-info"><div class="game-name">${g.n}</div><div class="game-tag">${g.t}</div></div></div>`).join('')}</div></div>`;
+  const s=el.querySelector('#gl-s'),grid=el.querySelector('#gl-grid'),cats=el.querySelectorAll('.gl-cat');let cur='All';
+  function filt(){const q=s.value.toLowerCase();grid.querySelectorAll('.game-card').forEach(c=>{c.style.display=(cur==='All'||c.dataset.t===cur)&&c.dataset.n.toLowerCase().includes(q)?'':'none';});}
+  s.oninput=filt;cats.forEach(b=>{b.onclick=()=>{cats.forEach(x=>x.classList.remove('on'));b.classList.add('on');cur=b.dataset.c;filt();};});
+}
+
+/* ── FILES ── */
+function buildFiles(el){
+  const items=[{n:'Desktop',ic:'🖥️'},{n:'Documents',ic:'📄'},{n:'Downloads',ic:'📥'},{n:'Games',ic:'🎮'},{n:'Music',ic:'🎵'},{n:'Pictures',ic:'🖼️'},{n:'Videos',ic:'🎬'},{n:'kiddinclass.exe',ic:'🟢'},{n:'README.txt',ic:'📝'},{n:'boot.log',ic:'📋'},{n:'config.json',ic:'⚙️'},{n:'theme.css',ic:'🎨'}];
+  el.innerHTML=`<div class="file-manager"><div class="app-bar"><button class="app-btn">←</button><button class="app-btn">→</button><button class="app-btn">⬆</button><input class="fm-path" value="kidd://home" readonly><button class="app-btn">⊞</button></div><div class="fm-body">${items.map(f=>`<div class="fm-item"><span class="fm-ic">${f.ic}</span><span class="fm-nm">${f.n}</span></div>`).join('')}</div></div>`;
+}
+
+/* ── TERMINAL ── */
+function buildTerm(el){
+  el.innerHTML=`<div class="terminal-app"><div class="term-out" id="tout">KIDD OS Terminal [v1.0.0]\nType <span style="color:var(--a2)">'help'</span> to see commands.\n\n</div><div class="term-line"><span class="term-prompt">${acctUser}@kiddos:~$&nbsp;</span><input class="term-in" id="tin" spellcheck="false" autocomplete="off"></div></div>`;
+  const out=el.querySelector('#tout'),inp=el.querySelector('#tin');
+  const hist=[];let hi=-1;
+  const CMDS={
+    help:()=>`Commands: help ls pwd whoami date uname echo [txt] clear games neofetch hack notify son irvin ninety01 iceman`,
+    ls:()=>`Desktop/ Documents/ Downloads/ Games/\nMusic/ Pictures/ Videos/\nkiddinclass.exe README.txt boot.log son.txt irvin_still_gaming.log`,
+    pwd:()=>'/home/'+acctUser,whoami:()=>acctUser,date:()=>new Date().toString(),
+    uname:()=>`KIDD OS 1.0.0 x86_64\nKernel: KiddKernel 1.0\nBase: kiddinclass\nGames: ${GAMES.length}`,
+    clear:()=>{out.innerHTML='';return null;},games:()=>{openApp('games');return 'Launching Game Launcher... (Irvin is already in there)';},
+    son:()=>`SON 💔\n\n  ,'",\n SON 💔\n\nno further context.`,
+    irvin:()=>`[*] Pinging Irvin...\n[*] Irvin found on: Call of Duty (prestige 12)\n[!] Irvin said "one sec" 3 hours ago\n[!] Irvin's gamertag: ONLINE\n[X] Irvin is NOT getting off the games.`,
+    ninety01:()=>`[*] Checking Ninety01 timeline...\n[*] Reposts found today: 34\n[*] Original posts today: 0\n[!] Ninety01 repost speed: 0.3 seconds per repost\n[!] Latest repost: something from 2019\n[X] They STAY reposting anything.`,
+    iceman:()=>`[*] Loading Iceman profile...\n[OK] Was a nice man: TRUE\n[!!] Is now hot and cold: TRUE\n[!!] Did the switchup: CONFIRMED\n[X] SYFM 💔 I trusted you Iceman.`,
+    notify:()=>{fireToast('💔','SON ALERT','Terminal message sent. SON 💔');return 'Notification fired. SON 💔';}  ,
+    neofetch:()=>`\n  ██╗  ██╗██╗██████╗ ██████╗\n  ██║ ██╔╝██║██╔══██╗██╔══██╗\n  █████╔╝ ██║██║  ██║██║  ██║\n\n  OS: Kidd OS 1.0.0      User: ${acctUser}\n  Irvin: still gaming    Ninety01: still reposting\n  Iceman: hot and cold   SON: 💔`,
+    matrix:()=>'Wake up, '+acctUser+'... Ninety01 just reposted The Matrix.',
+    hack:()=>{const ls=['[*] Initializing...','[*] Scanning 247 ports...','[!] Exploiting CVE-0000-KIDD...','[!] ROOT ACCESS GRANTED','[*] Checking if Irvin is on games... affirmative.','[*] Ninety01 reposts intercepted: 89','[✓] Done. SON 💔 We are so back, '+acctUser+'.'];let i=0;const iv=setInterval(()=>{if(i<ls.length){aOut(ls[i]);i++;}else clearInterval(iv);},350);return null;},
+  };
+  function aOut(t){out.textContent+=t+'\n';out.scrollTop=out.scrollHeight;}
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const r=inp.value.trim();if(!r)return;hist.unshift(r);hi=-1;aOut(`${acctUser}@kiddos:~$ ${r}`);const pts=r.split(' '),cmd=pts[0].toLowerCase();if(cmd==='echo')aOut(pts.slice(1).join(' '));else if(CMDS[cmd]){const res=CMDS[cmd]();if(res!=null)aOut(res);}else aOut(`ksh: not found: ${cmd}`);inp.value='';}
+    if(e.key==='ArrowUp'){hi=Math.min(hi+1,hist.length-1);inp.value=hist[hi]||'';}
+    if(e.key==='ArrowDown'){hi=Math.max(hi-1,-1);inp.value=hi>=0?hist[hi]:'';}
+  });
+  setTimeout(()=>inp.focus(),50);
+}
+
+/* ── BROWSER ── */
+function buildBrowser(el){
+  el.innerHTML=`<div class="browser-app"><div class="app-bar"><button class="app-btn">←</button><button class="app-btn">→</button><button class="app-btn">↺</button><input class="br-url" id="burl" value="kidd://newtab"><button class="app-btn" id="bgo">↵</button></div><div class="br-body" id="bbody" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;"><div style="font-size:46px;opacity:0.15">🌐</div><div style="font-size:13px;color:var(--text3)">KIDD BROWSER</div><div style="font-size:11px;color:#1a4a1a;margin-top:4px">Type a URL and press Enter</div></div></div>`;
+  const url=el.querySelector('#burl'),body=el.querySelector('#bbody');
+  function nav(){body.innerHTML=`<div style="font-size:40px;opacity:0.15">🔒</div><div style="font-size:12px;color:var(--text3)">Navigating: ${url.value}</div>`;}
+  url.addEventListener('keydown',e=>{if(e.key==='Enter')nav();});el.querySelector('#bgo').onclick=nav;
+}
+
+/* ── NOTEPAD ── */
+function buildNotes(el){
+  el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;"><div class="app-bar"><button class="app-btn">New</button><button class="app-btn">Save</button><span style="font-size:10px;color:var(--text3);margin-left:auto">KIDD NOTEPAD</span></div><textarea id="na" style="flex:1;background:#000;border:none;outline:none;color:var(--a);font-family:'Share Tech Mono',monospace;font-size:13px;padding:12px;resize:none;line-height:1.7;caret-color:var(--a);" placeholder="// Start typing..."></textarea><div style="padding:3px 10px;background:rgba(0,255,65,0.03);border-top:1px solid rgba(0,255,65,0.1);font-size:10px;color:var(--text3);display:flex;justify-content:space-between;"><span id="nc">0 chars</span><span id="nl">1 line</span></div></div>`;
+  const ta=el.querySelector('#na');ta.oninput=()=>{el.querySelector('#nc').textContent=ta.value.length+' chars';el.querySelector('#nl').textContent=ta.value.split('\n').length+' lines';};setTimeout(()=>ta.focus(),50);
+}
+
+/* ── CALCULATOR ── */
+function buildCalc(el){
+  setTimeout(()=>fireToast('🧮','CALCULATOR','first time someone was productive on this. 💔'),400);
+  el.innerHTML=`<div class="calc-app"><div class="calc-display"><div class="calc-expr" id="c-expr"></div><div class="calc-val" id="c-val">0</div></div><div class="calc-grid" id="c-grid"></div></div>`;
+  const disp=el.querySelector('#c-val'),expr=el.querySelector('#c-expr');
+  let cur='0',prev='',op='',fresh=false;
+  const btns=[
+    {l:'AC',cls:'calc-btn clear',act:'ac'},{l:'+/-',cls:'calc-btn op',act:'neg'},{l:'%',cls:'calc-btn op',act:'pct'},{l:'÷',cls:'calc-btn op',act:'op/'},
+    {l:'7',cls:'calc-btn',act:'7'},{l:'8',cls:'calc-btn',act:'8'},{l:'9',cls:'calc-btn',act:'9'},{l:'×',cls:'calc-btn op',act:'op*'},
+    {l:'4',cls:'calc-btn',act:'4'},{l:'5',cls:'calc-btn',act:'5'},{l:'6',cls:'calc-btn',act:'6'},{l:'−',cls:'calc-btn op',act:'op-'},
+    {l:'1',cls:'calc-btn',act:'1'},{l:'2',cls:'calc-btn',act:'2'},{l:'3',cls:'calc-btn',act:'3'},{l:'+',cls:'calc-btn op',act:'op+'},
+    {l:'0',cls:'calc-btn wide',act:'0'},{l:'.',cls:'calc-btn',act:'.'},{l:'=',cls:'calc-btn eq',act:'eq'},
+  ];
+  const grid=el.querySelector('#c-grid');
+  btns.forEach(b=>{
+    const btn=document.createElement('button');btn.className=b.cls;btn.textContent=b.l;
+    btn.onclick=()=>calcPress(b.act);grid.appendChild(btn);
+  });
+  function upd(){disp.textContent=parseFloat(cur).toLocaleString('en',{maximumFractionDigits:10}).replace(/\.?0+$/,'')|| cur;}
+  function calcPress(a){
+    if(a==='ac'){cur='0';prev='';op='';expr.textContent='';fresh=false;}
+    else if(a==='neg'){cur=String(-parseFloat(cur));}
+    else if(a==='pct'){cur=String(parseFloat(cur)/100);}
+    else if(a.startsWith('op')){
+      if(prev&&op&&!fresh){const r=compute();cur=String(r);expr.textContent=`${r} ${{'+':'+','-':'−','*':'×','/':'÷'}[a[2]]} `;}
+      else{expr.textContent=`${cur} ${{'+':'+','-':'−','*':'×','/':'÷'}[a[2]]} `;}
+      prev=cur;op=a[2];fresh=true;
+    }
+    else if(a==='eq'){
+      if(!op||!prev)return;
+      expr.textContent=`${prev} ${{'+':'+','-':'−','*':'×','/':'÷'}[op]||op} ${cur} =`;
+      cur=String(compute());prev='';op='';fresh=true;
+    }
+    else if(a==='.'){if(!cur.includes('.')){cur+='.';}fresh=false;}
+    else{cur=(fresh||cur==='0')?a:cur+a;fresh=false;}
+    upd();
+  }
+  function compute(){
+    const a=parseFloat(prev),b=parseFloat(cur);
+    switch(op){case'+':return+(a+b).toFixed(10);case'-':return+(a-b).toFixed(10);case'*':return+(a*b).toFixed(10);case'/':return b?+(a/b).toFixed(10):'Err';}
+  }
+}
+
+/* ── MUSIC PLAYER ── */
+const TRACKS=[
+  {t:'Blinding Lights',a:'The Weeknd',dur:'3:22',em:'🌙'},
+  {t:'Levitating',a:'Dua Lipa',dur:'3:23',em:'✨'},
+  {t:'As It Was',a:'Harry Styles',dur:'2:37',em:'🌊'},
+  {t:'Anti-Hero',a:'Taylor Swift',dur:'3:20',em:'🦸'},
+  {t:'Flowers',a:'Miley Cyrus',dur:'3:20',em:'🌸'},
+  {t:'Unholy',a:'Sam Smith',dur:'2:37',em:'🔥'},
+  {t:'Bad Habit',a:'Steve Lacy',dur:'3:52',em:'🎸'},
+  {t:'About Damn Time',a:'Lizzo',dur:'3:13',em:'💜'},
+  {t:'Heat Waves',a:'Glass Animals',dur:'3:59',em:'🌡️'},
+  {t:'STAY',a:'The Kid LAROI',dur:'2:21',em:'🌀'},
+];
+function buildMusic(el){
+  let cur=0,playing=false,prog=0,iv=null;
+  el.innerHTML=`<div class="music-app">
+    <div class="music-header">
+      <div class="music-art" id="ma">${TRACKS[0].em}</div>
+      <div class="music-info"><div class="music-title" id="mt">${TRACKS[0].t}</div><div class="music-artist" id="mar">${TRACKS[0].a}</div></div>
+    </div>
+    <div class="music-controls">
+      <button class="mc-btn" id="mc-shuf" title="Shuffle">⇄</button>
+      <button class="mc-btn" id="mc-prev" title="Prev">⏮</button>
+      <button class="mc-btn play" id="mc-play">▶</button>
+      <button class="mc-btn" id="mc-next" title="Next">⏭</button>
+      <button class="mc-btn" id="mc-rep" title="Repeat">↻</button>
+    </div>
+    <div class="music-progress">
+      <span class="mp-time" id="mp-cur">0:00</span>
+      <div class="mp-bar" id="mp-bar"><div class="mp-fill" id="mp-fill" style="width:0%"></div><div class="mp-thumb" id="mp-thumb" style="left:0%"></div></div>
+      <span class="mp-time end" id="mp-end">${TRACKS[0].dur}</span>
+    </div>
+    <div class="music-playlist">${TRACKS.map((t,i)=>`<div class="ml-item${i===0?' playing':''}" data-i="${i}"><div class="ml-num"><span class="ml-num-txt">${i+1}</span></div><div class="ml-info"><div class="ml-title">${t.t}</div><div class="ml-artist">${t.a}</div></div><div class="ml-dur">${t.dur}</div></div>`).join('')}</div>
+  </div>`;
+
+  const playBtn=el.querySelector('#mc-play');
+  function durToSecs(d){const[m,s]=d.split(':');return parseInt(m)*60+parseInt(s);}
+  function secsToStr(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+  function loadTrack(i){
+    cur=i;prog=0;const t=TRACKS[i];
+    el.querySelector('#ma').textContent=t.em;el.querySelector('#mt').textContent=t.t;
+    el.querySelector('#mar').textContent=t.a;el.querySelector('#mp-end').textContent=t.dur;
+    el.querySelector('#mp-fill').style.width='0%';el.querySelector('#mp-thumb').style.left='0%';
+    el.querySelector('#mp-cur').textContent='0:00';
+    el.querySelectorAll('.ml-item').forEach((li,j)=>li.classList.toggle('playing',j===i));
+  }
+  function tick(){
+    const total=durToSecs(TRACKS[cur].dur);prog=Math.min(prog+1,total);
+    const pct=(prog/total)*100;
+    el.querySelector('#mp-fill').style.width=pct+'%';el.querySelector('#mp-thumb').style.left=pct+'%';
+    el.querySelector('#mp-cur').textContent=secsToStr(prog);
+    if(prog>=total){clearInterval(iv);iv=null;loadTrack((cur+1)%TRACKS.length);if(playing){iv=setInterval(tick,1000);}}
+  }
+  function togglePlay(){
+    playing=!playing;playBtn.textContent=playing?'⏸':'▶';
+    el.querySelector('#ma').classList.toggle('playing',playing);
+    if(playing){iv=setInterval(tick,1000);}else{clearInterval(iv);iv=null;}
+  }
+  playBtn.onclick=togglePlay;
+  el.querySelector('#mc-next').onclick=()=>{clearInterval(iv);iv=null;loadTrack((cur+1)%TRACKS.length);if(playing)iv=setInterval(tick,1000);};
+  el.querySelector('#mc-prev').onclick=()=>{clearInterval(iv);iv=null;loadTrack((cur-1+TRACKS.length)%TRACKS.length);if(playing)iv=setInterval(tick,1000);};
+  el.querySelector('#mc-shuf').onclick=()=>{clearInterval(iv);iv=null;const r=Math.floor(Math.random()*TRACKS.length);loadTrack(r);if(playing)iv=setInterval(tick,1000);};
+  el.querySelectorAll('.ml-item').forEach(li=>{li.onclick=()=>{clearInterval(iv);iv=null;loadTrack(parseInt(li.dataset.i));if(playing)iv=setInterval(tick,1000);};});
+  el.querySelector('#mp-bar').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;prog=Math.floor(pct*durToSecs(TRACKS[cur].dur));};
+}
+
+/* ── SETTINGS ── */
+function buildSettings(el){
+  const themeColors=[
+    {name:'Matrix Green',vars:'--a:#00ff41;--a2:#00cc33;--a3:rgba(0,255,65,0.18);--a4:rgba(0,255,65,0.07);--a-glow:rgba(0,255,65,0.55);--border:rgba(0,255,65,0.28);--border2:rgba(0,255,65,0.45);',bg:'#030a03',color:'#00ff41'},
+    {name:'Cyber Cyan',vars:'--a:#00eeff;--a2:#00ccdd;--a3:rgba(0,238,255,0.18);--a4:rgba(0,238,255,0.07);--a-glow:rgba(0,238,255,0.55);--border:rgba(0,238,255,0.28);--border2:rgba(0,238,255,0.45);',bg:'#030a0b',color:'#00eeff'},
+    {name:'Neon Purple',vars:'--a:#bf5fff;--a2:#9933ff;--a3:rgba(150,50,255,0.18);--a4:rgba(150,50,255,0.07);--a-glow:rgba(150,50,255,0.55);--border:rgba(150,50,255,0.28);--border2:rgba(150,50,255,0.45);',bg:'#05020b',color:'#bf5fff'},
+    {name:'Infra Red',vars:'--a:#ff4455;--a2:#cc2233;--a3:rgba(255,50,70,0.18);--a4:rgba(255,50,70,0.07);--a-glow:rgba(255,50,70,0.55);--border:rgba(255,50,70,0.28);--border2:rgba(255,50,70,0.45);',bg:'#0b0203',color:'#ff4455'},
+  ];
+  let curTheme=0;
+  const panels={
+    appearance:`<div class="set-title">APPEARANCE</div>
+      <div class="set-row"><div><div class="set-lbl">Theme Color</div><div class="set-sub">Changes the entire OS accent color</div></div></div>
+      <div style="padding:8px 0 16px;"><div class="theme-swatches">${themeColors.map((t,i)=>`<div class="theme-sw${i===0?' on':''}" data-ti="${i}" style="background:${t.color};box-shadow:0 0 8px ${t.color}40;" title="${t.name}"></div>`).join('')}</div><div style="font-size:10px;color:var(--text3);margin-top:6px;" id="theme-label">Matrix Green</div></div>
+      <div class="set-row"><div><div class="set-lbl">Matrix Rain</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">Glow Effects</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">Window Animations</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">Compact Taskbar</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>`,
+    system:`<div class="set-title">SYSTEM</div>
+      <div class="set-row"><div><div class="set-lbl">OS Version</div><div class="set-sub">Kidd OS 1.0.0 stable</div></div><span style="font-size:10px;color:var(--a2)">up to date</span></div>
+      <div class="set-row"><div><div class="set-lbl">User</div></div><span style="font-size:11px;color:var(--a)" id="sys-user-val">—</span></div>
+      <div class="set-row"><div><div class="set-lbl">Base Project</div><div class="set-sub">kiddinclass game launcher</div></div></div>
+      <div class="set-row"><div><div class="set-lbl">Auto-Updates</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">Notifications</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>`,
+    network:`<div class="set-title">NETWORK</div>
+      <div class="set-row"><div><div class="set-lbl">Status</div></div><span style="font-size:11px;color:var(--a)">● Connected</span></div>
+      <div class="set-row"><div><div class="set-lbl">Firewall</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">VPN Mode</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>`,
+    sound:`<div class="set-title">SOUND</div>
+      <div class="set-row"><div><div class="set-lbl">System Sounds</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="set-row"><div><div class="set-lbl">Volume</div></div><input type="range" min="0" max="100" value="70" style="width:90px;accent-color:var(--a)"></div>
+      <div class="set-row"><div><div class="set-lbl">Toast Sounds</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>`,
+    about:`<div class="set-title">ABOUT</div><div style="font-size:12px;color:var(--text2);line-height:1.85;padding-top:4px;"><b style="color:var(--a);font-family:'VT323',monospace;font-size:20px;">Kidd OS</b> v1.0.0<br><span style="color:var(--text3)">Spun off from <span style="color:var(--a2)">kiddinclass</span> game launcher.</span><br><span style="color:var(--text3)">Green. Black. Unhinged. Goated.</span><br><span style="color:var(--text3)">Irvin: still on the games.</span><br><span style="color:var(--text3)">Ninety01: reposted while you read this.</span><br><span style="color:var(--text3)">Iceman: hot and cold. SYFM 💔</span><br><br><span style="color:#1a4a1a">© 2024 Kidd OS Project // SON 💔</span></div>`,
+  };
+  el.innerHTML=`<div class="settings-app"><div class="set-nav">${[['appearance','🎨 Appearance'],['system','⚙️ System'],['network','🌐 Network'],['sound','🔊 Sound'],['about','ℹ️ About']].map((n,i)=>`<div class="set-nav-item${i===0?' on':''}" data-k="${n[0]}">${n[1]}</div>`).join('')}</div><div class="set-body" id="set-body">${panels['appearance']}</div></div>`;
+  const body=el.querySelector('#set-body');
+  // theme swatches
+  el.addEventListener('click',e=>{
+    const sw=e.target.closest('.theme-sw');
+    if(sw){
+      const ti=parseInt(sw.dataset.ti);curTheme=ti;const theme=themeColors[ti];
+      document.documentElement.style.cssText=theme.vars+`--bg:${theme.bg};`;
+      document.body.style.background=theme.bg;
+      el.querySelectorAll('.theme-sw').forEach((x,j)=>x.classList.toggle('on',j===ti));
+      const lbl=el.querySelector('#theme-label');if(lbl)lbl.textContent=theme.name;
+      fireToast('🎨','Theme','Switched to '+theme.name+'.');
+    }
+  });
+  el.querySelectorAll('.set-nav-item').forEach(n=>{
+    n.onclick=()=>{
+      el.querySelectorAll('.set-nav-item').forEach(x=>x.classList.remove('on'));n.classList.add('on');
+      const html=panels[n.dataset.k];body.innerHTML=typeof html==='function'?html():html;
+      if(n.dataset.k==='system'){const uv=body.querySelector('#sys-user-val');if(uv)uv.textContent=acctUser;}
+    };
+  });
+}
+
+/* ── ABOUT ── */
+function buildAbout(el){
+  el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
+    <div style="font-family:'VT323',monospace;font-size:62px;color:var(--a);text-shadow:0 0 22px var(--a-glow);line-height:1;">KIDD OS</div>
+    <div style="font-size:11px;color:var(--text3);letter-spacing:3px;">VERSION 1.0.0 // STABLE RELEASE</div>
+    <div style="font-size:12.5px;color:var(--text2);max-width:300px;line-height:1.7;">Logged in as <span style="color:var(--a)">${acctUser}</span>.<br>Spun off from <span style="color:var(--a2)">kiddinclass</span>.<br>9 apps. ${GAMES.length} games. No cap.<br><span style="color:var(--text3);font-size:11px;">Irvin: on the games (still)<br>Ninety01: reposting (always)<br>Iceman: hot and cold. SYFM 💔</span></div>
+    <button onclick="openApp('games')" style="margin-top:10px;padding:9px 22px;background:rgba(0,255,65,0.13);border:1px solid var(--border2);color:var(--a);font-family:'VT323',monospace;font-size:19px;cursor:pointer;border-radius:4px;letter-spacing:2px;">▶ LAUNCH GAMES</button>
+    <button onclick="openApp('music')" style="padding:7px 18px;background:transparent;border:1px solid var(--border);color:var(--text3);font-family:'VT323',monospace;font-size:16px;cursor:pointer;border-radius:4px;letter-spacing:1px;">🎵 MUSIC PLAYER</button>
+    <div style="font-size:10px;color:#1a4a1a;margin-top:4px;">SON 💔</div>
+  </div>`;
+}
+</script>
+</body>
+</html>
