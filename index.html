@@ -90,11 +90,11 @@ body{width:100vw;height:100vh;overflow:hidden;font-family:'Share Tech Mono',mono
 .notif-badge{position:absolute;top:2px;right:2px;min-width:14px;height:14px;background:#ff4444;border-radius:7px;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px;display:none;}
 .notif-badge.show{display:flex;}
 #clock{font-family:'VT323',monospace;font-size:19px;color:var(--a);text-shadow:0 0 7px var(--a-glow);padding:0 8px;white-space:nowrap;flex-shrink:0;cursor:pointer;position:relative;}
-#clock-tooltip{position:absolute;bottom:48px;right:8px;background:rgba(4,14,4,0.98);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--text2);white-space:nowrap;display:none;z-index:9100;}
+#clock-tooltip{position:fixed;bottom:52px;right:8px;background:rgba(4,14,4,0.98);border:1px solid rgba(0,255,65,0.38);border-radius:6px;padding:8px 12px;font-size:11px;color:#7ab07a;white-space:nowrap;display:none;z-index:9100;box-shadow:0 4px 16px rgba(0,0,0,0.6);}
 
 /* ── START MENU ─────────────────────────────────── */
 #start-menu{position:fixed;bottom:48px;left:8px;width:320px;background:rgba(3,10,3,0.98);border:1px solid rgba(0,255,65,0.38);border-radius:8px 8px 0 0;box-shadow:0 -4px 28px rgba(0,255,65,0.12);z-index:9500;display:none;flex-direction:column;overflow:hidden;transform-origin:bottom left;transition:transform 0.18s,opacity 0.18s;}
-#start-menu.open{display:flex;}
+#start-menu.sm-open{display:flex;}
 .sm-head{padding:12px 14px;background:rgba(0,255,65,0.07);border-bottom:1px solid rgba(0,255,65,0.18);display:flex;align-items:center;gap:12px;}
 .sm-avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.35);display:flex;align-items:center;justify-content:center;font-size:20px;}
 .sm-os{font-family:'VT323',monospace;font-size:22px;color:var(--a);letter-spacing:2px;}
@@ -258,6 +258,33 @@ body{width:100vw;height:100vh;overflow:hidden;font-family:'Share Tech Mono',mono
 .theme-swatches{display:flex;gap:8px;margin-top:6px;}
 .theme-sw{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
 .theme-sw:hover,.theme-sw.on{border-color:#fff;transform:scale(1.1);}
+
+
+
+
+
+/* ── BIBATA-MODERN-CLASSIC CURSOR ─────────────────── */
+*, *::before, *::after {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNCAyIEw0IDIwIEw4LjUgMTUuNSBMMTIgMjIgTDE0IDIxIEwxMC41IDE0LjUgTDE3IDE0LjUgWiIgZmlsbD0id2hpdGUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTQgMiBMNCAyMCBMOC41IDE1LjUgTDEyIDIyIEwxNCAyMSBMMTAuNSAxNC41IEwxNyAxNC41IFoiIGZpbGw9IiMxMTExMTEiLz48L3N2Zz4=") 4 2, auto !important;
+}
+a, button, [onclick], .wbtn, .tb-btn, .sm-item, .desktop-icon,
+.game-card, .app-btn, .calc-btn, .setup-btn, .av-opt, .gl-cat,
+.ctx-item, .sm-fbt, .tray-item, #start-btn, #clock,
+.np-clear, .toast-close, .fm-item, .ml-item, .set-nav-item,
+.theme-sw, .mp-ctrl, select {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOCAxLjVDNi45IDEuNSA2IDIuNCA2IDMuNVYxMy4yQzUuNCAxMi43IDQuNiAxMi41IDMuOCAxMi44IDIuOSAxMy4xIDIuMyAxNCAyLjUgMTVMMyAxN0MzLjggMTkuOCA2LjMgMjIgOS4yIDIySDE0QzE3LjMgMjIgMjAgMTkuMyAyMCAxNlYxMS41QzIwIDEwLjQgMTkuMSA5LjUgMTggOS41IDE3LjYgOS41IDE3LjIgOS42IDE2LjkgOS45IDE2LjUgOS4xIDE1LjcgOC41IDE0LjcgOC41IDE0LjIgOC41IDEzLjggOC43IDEzLjQgOSAxMyA4LjIgMTIuMSA3LjcgMTEgNy43VjMuNUMxMSAyLjQgMTAuMSAxLjUgOSAxLjVIOFoiIGZpbGw9IndoaXRlIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik04IDEuNUM2LjkgMS41IDYgMi40IDYgMy41VjEzLjJDNS40IDEyLjcgNC42IDEyLjUgMy44IDEyLjggMi45IDEzLjEgMi4zIDE0IDIuNSAxNUwzIDE3QzMuOCAxOS44IDYuMyAyMiA5LjIgMjJIMTRDMTcuMyAyMiAyMCAxOS4zIDIwIDE2VjExLjVDMjAgMTAuNCAxOS4xIDkuNSAxOCA5LjUgMTcuNiA5LjUgMTcuMiA5LjYgMTYuOSA5LjkgMTYuNSA5LjEgMTUuNyA4LjUgMTQuNyA4LjUgMTQuMiA4LjUgMTMuOCA4LjcgMTMuNCA5IDEzIDguMiAxMi4xIDcuNyAxMSA3LjdWMy41QzExIDIuNCAxMC4xIDEuNSA5IDEuNUg4WiIgZmlsbD0iIzExMTExMSIgc3Ryb2tlPSJub25lIi8+PC9zdmc+") 8 2, auto !important;
+}
+input[type="text"], input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]),
+textarea, .term-in, .br-url, .setup-input, #sm-search, #gl-s, .fm-path {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48ZyBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iOSIgeTE9IjQiIHgyPSIxNSIgeTI9IjQiLz48bGluZSB4MT0iOSIgeTE9IjIwIiB4Mj0iMTUiIHkyPSIyMCIvPjxsaW5lIHgxPSIxMiIgeTE9IjQiIHgyPSIxMiIgeTI9IjIwIi8+PC9nPjxnIHN0cm9rZT0iIzExMTExMSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PGxpbmUgeDE9IjkiIHkxPSI0IiB4Mj0iMTUiIHkyPSI0Ii8+PGxpbmUgeDE9IjkiIHkxPSIyMCIgeDI9IjE1IiB5Mj0iMjAiLz48bGluZSB4MT0iMTIiIHkxPSI0IiB4Mj0iMTIiIHkyPSIyMCIvPjwvZz48L3N2Zz4=") 12 12, auto !important;
+}
+.win-titlebar {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOSA1QzkgNC40IDguNiA0IDggNFM3IDQuNCA3IDVWMTIuNUw1LjUgMTFDNSAxMC41IDQuMiAxMC41IDMuNyAxMSAzLjIgMTEuNSAzLjIgMTIuMyAzLjcgMTIuOEw3IDE2LjVDOCAxNy44IDkuNSAxOC41IDExIDE4LjVIMTRDMTYuOCAxOC41IDE5IDE2LjMgMTkgMTMuNVY4QzE5IDcuNCAxOC42IDcgMTggN1MxNyA3LjQgMTcgOFYxMEMxNyA5LjQgMTYuNiA5IDE2IDlTMTUgOS40IDE1IDEwVjkuNUMxNSA4LjkgMTQuNiA4LjUgMTQgOC41UzEzIDguOSAxMyA5LjVWOUMxMyA4LjQgMTIuNiA4IDEyIDhTMTEgOC40IDExIDlWNUMxMSA0LjQgMTAuNiA0IDEwIDRTOSA0LjQgOSA1WiIgZmlsbD0id2hpdGUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTkgNUM5IDQuNCA4LjYgNCA4IDRTNyA0LjQgNyA1VjEyLjVMNS41IDExQzUgMTAuNSA0LjIgMTAuNSAzLjcgMTEgMy4yIDExLjUgMy4yIDEyLjMgMy43IDEyLjhMNyAxNi41QzggMTcuOCA5LjUgMTguNSAxMSAxOC41SDE0QzE2LjggMTguNSAxOSAxNi4zIDE5IDEzLjVWOEMxOSA3LjQgMTguNiA3IDE4IDdTMTcgNy40IDE3IDhWMTBDMTcgOS40IDE2LjYgOSAxNiA5UzE1IDkuNCAxNSAxMFY5LjVDMTUgOC45IDE0LjYgOC41IDE0IDguNVMxMyA4LjkgMTMgOS41VjlDMTMgOC40IDEyLjYgOCAxMiA4UzExIDguNCAxMSA5VjVDMTEgNC40IDEwLjYgNCAxMCA0UzkgNC40IDkgNVoiIGZpbGw9IiMxMTExMTEiIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg==") 9 2, auto !important;
+}
+.win-resize {
+  cursor: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48ZyBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZmlsbD0ibm9uZSI+PHBvbHlsaW5lIHBvaW50cz0iOSwxNSAxNSwxNSAxNSw5Ii8+PGxpbmUgeDE9IjkiIHkxPSI5IiB4Mj0iMTUiIHkyPSIxNSIvPjwvZz48ZyBzdHJva2U9IiMxMTExMTEiIHN0cm9rZS13aWR0aD0iMS44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiPjxwb2x5bGluZSBwb2ludHM9IjksMTUgMTUsMTUgMTUsOSIvPjxsaW5lIHgxPSI5IiB5MT0iOSIgeDI9IjE1IiB5Mj0iMTUiLz48L2c+PC9zdmc+") 15 15, auto !important;
+}
+
 </style>
 </head>
 <body>
@@ -309,8 +336,10 @@ body{width:100vw;height:100vh;overflow:hidden;font-family:'Share Tech Mono',mono
 <div id="ctx-menu">
   <div class="ctx-item" onclick="ctxAction('games')"><span>🎮</span> Open Games</div>
   <div class="ctx-item" onclick="ctxAction('term')"><span>💻</span> Open Terminal</div>
+  <div class="ctx-item" onclick="ctxAction('paint')"><span>🎨</span> Open Paint</div>
+  <div class="ctx-item" onclick="ctxAction('snake')"><span>🐍</span> Play Snake</div>
   <div class="ctx-sep"></div>
-  <div class="ctx-item" onclick="ctxAction('theme')"><span>🎨</span> Change Theme</div>
+  <div class="ctx-item" onclick="ctxAction('theme')"><span>⚙️</span> Change Theme</div>
   <div class="ctx-item" onclick="ctxAction('refresh')"><span>↺</span> Refresh Desktop</div>
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="ctxAction('about')"><span>🖥️</span> About Kidd OS</div>
@@ -349,7 +378,7 @@ body{width:100vw;height:100vh;overflow:hidden;font-family:'Share Tech Mono',mono
     <div class="tray-item" id="tray-battery" title="Battery">🔋</div>
     <div class="tray-item" onclick="toggleNotifPanel()" title="Notifications" style="position:relative;">🔔<div class="notif-badge" id="notif-badge">0</div></div>
   </div>
-  <div id="clock" onclick="toggleClockTip()"></div>
+  <div id="clock" onclick="toggleClockTip()"><span id="clock-time">00:00:00</span></div>
   <div id="clock-tooltip"></div>
 </div>
 
@@ -401,14 +430,12 @@ const bootMsgs=[
   {t:'Initializing Kidd OS kernel...',cl:'ld'},
   {t:'Loading matrix renderer...',cl:'ok'},
   {t:'Mounting file system...',cl:'ok'},
-  {t:'Checking if Ninety01 reposted anything new... (they did)',cl:'ok'},
-  {t:'SON 💔 detected in memory. Running grief.exe...',cl:'ld'},
-  {t:'grief.exe crashed. SON 💔 too powerful.',cl:'ld'},
-  {t:'Telling Irvin to get off the games... no response.',cl:'ld'},
-  {t:'IRVIN STILL ON THE GAMES. Escalating to toast notification.',cl:'ld'},
-  {t:'Loading Iceman profile... was nice. now hot and cold. SYFM 💔',cl:'ok'},
-  {t:'Verifying brain rot integrity... immaculate.',cl:'ok'},
+  {t:'Installing type shi modules...',cl:'ok'},
+  {t:'Verifying brain rot integrity...',cl:'ok'},
   {t:'Loading game launcher assets...',cl:'ok'},
+  {t:'SON 💔 detected. Applying patches...',cl:'ld'},
+  {t:'Patches applied. We are so back.',cl:'ok'},
+  {t:'Calibrating tiki funk levels...',cl:'ok'},
   {t:'Starting notification daemon...',cl:'ok'},
   {t:'Music player ready...',cl:'ok'},
   {t:'USER_PLACEHOLDER. Booting desktop...',cl:'ok'},
@@ -438,11 +465,13 @@ function launchDesktop(){
     document.getElementById('top-ticker').style.display='flex';
     document.getElementById('desktop').style.display='block';
     document.getElementById('taskbar').style.display='flex';
+    document.getElementById('start-menu').classList.remove('sm-open');
     startMatrixRain();tickClock();setInterval(tickClock,1000);
     buildDesktopIcons();buildStartMenu();startTicker();
     startSystemTray();startToastScheduler();
     setTimeout(()=>openApp('games'),600);
-    setTimeout(()=>fireToast('💔','SON ALERT','System booted. Irvin still on the games.'),3000);
+    setTimeout(()=>fireToast('🔥','KIDD OS','System booted. We are so back fr'),3000);
+    setTimeout(spawnDesktopWidgets,1200);
   },800);
 }
 
@@ -450,40 +479,24 @@ function launchDesktop(){
    TICKER
 ══════════════════════════════════════ */
 const QUOTES=[
+  {msg:'Ninety01 be reposting anything 💔',em:'🔁'},
   {msg:'SON 💔',em:'💔'},
-  {msg:'Ninety01 reposted ANOTHER one. bro repost ANYTHING.',em:'🔁'},
-  {msg:'Iceman was a nice man now he hot and cold SYFM 💔',em:'🧊'},
-  {msg:'IRVIN GET OFF THE GAMES BRO',em:'🎮'},
-  {msg:'bro is NOT him',em:'💀'},
-  {msg:'SON what was THAT 💔',em:'💔'},
-  {msg:'Ninety01 really said "let me repost this too" and it was a SLIDESHOW',em:'🔁'},
-  {msg:'Irvin said 5 more minutes 47 minutes ago',em:'⏰'},
-  {msg:'Iceman really switched up like that. we are NOT okay.',em:'🧊'},
-  {msg:'SON 💔 why did you do that',em:'💔'},
-  {msg:'chat... am I cooked rn',em:'😭'},
-  {msg:'Ninety01 scroll timeline is literally just reposts at this point',em:'🔁'},
-  {msg:'IRVIN THE SQUAD IS WAITING. PUT THE CONTROLLER DOWN.',em:'🎮'},
-  {msg:'he said lemme cook... he did NOT cook',em:'🍳'},
-  {msg:'Iceman said "trust me bro" and then was immediately untrustworthy',em:'🧊'},
-  {msg:'bro fell off no printer just fax',em:'📠'},
-  {msg:'SON 💔 I am NOT recovering from that',em:'💔'},
-  {msg:'Ninety01 reposted that same video TWICE in one day. accountability.',em:'🔁'},
-  {msg:'Irvin said he\'s not on games. his gamertag is literally active rn.',em:'🎮'},
-  {msg:'Iceman was a NICE MAN. key word: WAS. SYFM.',em:'🧊'},
-  {msg:'we are SO back (we were never back)',em:'📉'},
-  {msg:'type shi type shi type shi',em:'⌨️'},
-  {msg:'bro said "I\'m him" and was not him 💔',em:'🪞'},
-  {msg:'Ninety01: *opens TikTok* *immediately reposts first thing*',em:'🔁'},
-  {msg:'IRVIN!!! GET. OFF. THE. GAMES!!!',em:'🎮'},
-  {msg:'biggest W of the century no debate',em:'🏆'},
-  {msg:'Iceman we trusted you bro. we actually trusted you.',em:'🧊'},
-  {msg:'SON 💔 bro really said that to me specifically',em:'💔'},
-  {msg:'brain is fully rotted. desktop is clean tho.',em:'🧠'},
-  {msg:'Ninety01 repost speed is genuinely faster than my wifi',em:'🔁'},
-  {msg:'it\'s joever (it\'s not joever)',em:'🔄'},
-  {msg:'Irvin I can see your ping in the lobby BRO',em:'🎮'},
-  {msg:'Iceman was literally the nicest. now he cold. now he hot. make it make sense.',em:'🧊'},
-  {msg:'SON 💔 on sight',em:'💔'},
+  {msg:'W Speed. picks up water.',em:'💧'},
+  {msg:'Iceman was a nice man. now he hot and cold. SYFM 💔',em:'🧊'},
+  {msg:'say wallahi bro say wallahi',em:'😤'},
+  {msg:'who is he?',em:'❓'},
+  {msg:'Irvin did it.',em:'🎮'},
+  {msg:'OFF THE GAMES.',em:'😡'},
+  {msg:'Tikiiii tiki tikiii',em:'🗿'},
+  {msg:'1 day or day 1?',em:'🧠'},
+  {msg:'slime jordhy he got annotate blocked',em:'😭'},
+  {msg:'HOW DID HE NOT GET A BREACH????',em:'😡'},
+  {msg:'someone tell her stop screaming',em:'💔'},
+  {msg:'NO FOIDS ALLOWED.',em:'🚫'},
+  {msg:'stop talking please.',em:'🛑'},
+  {msg:'wrap it up its time for lunch.',em:'🥀'},
+  {msg:'I LOVE THE TASTE OF IRON.',em:'🪳'},
+  {msg:'yo this is corny asf ngl',em:'💔'},
 ];
 let tickIdx=0,tickActive='a';
 function startTicker(){
@@ -519,13 +532,21 @@ function startMatrixRain(){
 function tickClock(){
   const n=new Date();
   const h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
-  const clkEl=document.getElementById('clock');
-  if(!clkEl.childNodes[0]||clkEl.childNodes[0].nodeType!==Node.TEXT_NODE)clkEl.prepend(`${h}:${m}:${s}`);
-  else clkEl.childNodes[0].nodeValue=`${h}:${m}:${s}`;
-  const tip=document.getElementById('clock-tooltip');
-  if(tip.style.display==='block'){const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];const months=['January','February','March','April','May','June','July','August','September','October','November','December'];tip.textContent=`${days[n.getDay()]}, ${months[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;}
+  const clkEl=document.getElementById('clock-time');
+  if(clkEl) clkEl.textContent=`${h}:${m}:${s}`;
+
 }
-function toggleClockTip(){const t=document.getElementById('clock-tooltip');t.style.display=t.style.display==='block'?'none':'block';}
+function toggleClockTip(){
+  const t=document.getElementById('clock-tooltip');
+  const open=t.style.display==='block';
+  t.style.display=open?'none':'block';
+  if(!open){
+    const n=new Date();
+    const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    t.textContent=`${days[n.getDay()]}, ${months[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;
+  }
+}
 document.addEventListener('click',e=>{if(!e.target.closest('#clock'))document.getElementById('clock-tooltip').style.display='none';});
 
 /* ══════════════════════════════════════
@@ -548,7 +569,7 @@ function startSystemTray(){
 /* ══════════════════════════════════════
    TOASTS + NOTIFICATION CENTER
 ══════════════════════════════════════ */
-let notifCount=0;
+let notifCount=0,notifsMuted=false;
 const notifHistory=[];
 const TOAST_MSGS=[
   {icon:'💔',title:'ts is corny',msg:"yo this is corny asf ngl"},
@@ -578,8 +599,10 @@ function fireToast(icon,title,msg){
   setTimeout(()=>dismissToast(t),6000);
 }
 function dismissToast(t){if(!t||!t.parentNode)return;t.classList.add('out');setTimeout(()=>t.remove(),400);}
+let toastSchedulerInterval=null;
 function startToastScheduler(){
-  setInterval(()=>{
+  toastSchedulerInterval=setInterval(()=>{
+    if(notifsMuted)return;
     const m=TOAST_MSGS[Math.floor(Math.random()*TOAST_MSGS.length)];
     fireToast(m.icon,m.title,m.msg);
   },35000);
@@ -589,7 +612,7 @@ function toggleNotifPanel(){
   const open=p.classList.contains('open');
   p.classList.toggle('open',!open);
   if(!open){notifCount=0;document.getElementById('notif-badge').textContent='0';document.getElementById('notif-badge').classList.remove('show');}
-  document.getElementById('start-menu').style.display='none';
+  // start menu stays hidden via CSS until toggled
 }
 function clearNotifs(){notifHistory.length=0;updateNotifPanel();}
 function updateNotifPanel(){
@@ -610,6 +633,8 @@ const APPS=[
   {id:'notes',  name:'Notepad',       icon:'📝',w:520,h:420},
   {id:'calc',   name:'Calculator',    icon:'🧮',w:300,h:430},
   {id:'music',  name:'Music Player',  icon:'🎵',w:360,h:540},
+  {id:'paint',  name:'Paint',         icon:'🎨',w:680,h:500},
+  {id:'snake',  name:'Snake',         icon:'🐍',w:460,h:440},
   {id:'settings',name:'Settings',     icon:'⚙️',w:540,h:440},
   {id:'about',  name:'About Kidd OS', icon:'🖥️',w:420,h:330},
 ];
@@ -662,7 +687,7 @@ document.addEventListener('click',hideCtxMenu);
 document.addEventListener('contextmenu',e=>{if(!e.target.closest('#desktop')&&!e.target.closest('.desktop-icon'))hideCtxMenu();});
 function ctxAction(a){
   hideCtxMenu();
-  if(a==='games'||a==='term'||a==='about')openApp(a);
+  if(['games','term','about','paint','snake','music','calc'].includes(a))openApp(a);
   else if(a==='theme')openApp('settings');
   else if(a==='refresh')fireToast('↺','Desktop','Desktop refreshed. W move.');
 }
@@ -684,17 +709,16 @@ function filterSmApps(q){
 }
 function toggleStart(){
   const m=document.getElementById('start-menu'),b=document.getElementById('start-btn');
-  const isOpen=m.style.display==='flex';
-  m.style.display=isOpen?'none':'flex';b.classList.toggle('active',!isOpen);
-  if(!isOpen){document.getElementById('sm-search').value='';filterSmApps('');document.getElementById('sm-search').focus();}
+  const isOpen=m.classList.contains('sm-open');
+  if(isOpen){closeStart();}else{m.classList.add('sm-open');b.classList.add('active');document.getElementById('sm-search').value='';filterSmApps('');setTimeout(()=>document.getElementById('sm-search').focus(),50);}
   document.getElementById('notif-panel').classList.remove('open');
 }
-function closeStart(){document.getElementById('start-menu').style.display='none';document.getElementById('start-btn').classList.remove('active');}
+function closeStart(){document.getElementById('start-menu').classList.remove('sm-open');document.getElementById('start-btn').classList.remove('active');}
 document.addEventListener('click',e=>{if(!e.target.closest('#start-menu')&&!e.target.closest('#start-btn'))closeStart();});
 
 function doShutdown(){
   document.body.style.transition='opacity 1s';document.body.style.opacity='0';
-  setTimeout(()=>{document.body.innerHTML='<div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#000;font-family:VT323,monospace;font-size:22px;color:#00ff41;text-shadow:0 0 12px #00ff41;text-align:center;padding:20px;">SYSTEM HALTED<br/>KIDD OS SHUTDOWN COMPLETE<br/><span style="font-size:16px;color:#1a5a1a;margin-top:12px;display:block;">Irvin is STILL on the games.<br/>Ninety01 reposted twice during shutdown.<br/>SON 💔</span><br/><span style="font-size:14px;color:#0a5a0a;margin-top:8px;display:block;">Refresh page to restart</span></div>';document.body.style.opacity='1';},1000);
+  setTimeout(()=>{document.body.innerHTML='<div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:#000;font-family:VT323,monospace;font-size:22px;color:#00ff41;text-shadow:0 0 12px #00ff41;text-align:center;padding:20px;">SYSTEM HALTED<br/>KIDD OS SHUTDOWN COMPLETE<br/><span style="font-size:14px;color:#0a5a0a;margin-top:12px;display:block;">Refresh page to restart</span></div>';document.body.style.opacity='1';},1000);
 }
 function doRestart(){document.body.style.transition='opacity 0.5s';document.body.style.opacity='0';setTimeout(()=>location.reload(),600);}
 
@@ -754,7 +778,7 @@ document.head.insertAdjacentHTML('beforeend','<style>@keyframes winClose{to{opac
    APP BUILDERS
 ══════════════════════════════════════ */
 function buildApp(id,c){
-  const map={games:buildGames,files:buildFiles,term:buildTerm,browser:buildBrowser,notes:buildNotes,calc:buildCalc,music:buildMusic,settings:buildSettings,about:buildAbout};
+  const map={games:buildGames,files:buildFiles,term:buildTerm,browser:buildBrowser,notes:buildNotes,calc:buildCalc,music:buildMusic,paint:buildPaint,snake:buildSnake,settings:buildSettings,about:buildAbout};
   if(map[id])map[id](c);
 }
 
@@ -799,19 +823,16 @@ function buildTerm(el){
   const out=el.querySelector('#tout'),inp=el.querySelector('#tin');
   const hist=[];let hi=-1;
   const CMDS={
-    help:()=>`Commands: help ls pwd whoami date uname echo [txt] clear games neofetch hack notify son irvin ninety01 iceman`,
-    ls:()=>`Desktop/ Documents/ Downloads/ Games/\nMusic/ Pictures/ Videos/\nkiddinclass.exe README.txt boot.log son.txt irvin_still_gaming.log`,
+    help:()=>`Commands: help ls pwd whoami date uname echo [txt] clear games neofetch matrix hack notify syfm`,
+    ls:()=>`Desktop/ Documents/ Downloads/ Games/\nMusic/ Pictures/ Videos/\nkiddinclass.exe README.txt boot.log config.json`,
     pwd:()=>'/home/'+acctUser,whoami:()=>acctUser,date:()=>new Date().toString(),
     uname:()=>`KIDD OS 1.0.0 x86_64\nKernel: KiddKernel 1.0\nBase: kiddinclass\nGames: ${GAMES.length}`,
-    clear:()=>{out.innerHTML='';return null;},games:()=>{openApp('games');return 'Launching Game Launcher... (Irvin is already in there)';},
-    son:()=>`SON 💔\n\n  ,'",\n SON 💔\n\nno further context.`,
-    irvin:()=>`[*] Pinging Irvin...\n[*] Irvin found on: Call of Duty (prestige 12)\n[!] Irvin said "one sec" 3 hours ago\n[!] Irvin's gamertag: ONLINE\n[X] Irvin is NOT getting off the games.`,
-    ninety01:()=>`[*] Checking Ninety01 timeline...\n[*] Reposts found today: 34\n[*] Original posts today: 0\n[!] Ninety01 repost speed: 0.3 seconds per repost\n[!] Latest repost: something from 2019\n[X] They STAY reposting anything.`,
-    iceman:()=>`[*] Loading Iceman profile...\n[OK] Was a nice man: TRUE\n[!!] Is now hot and cold: TRUE\n[!!] Did the switchup: CONFIRMED\n[X] SYFM 💔 I trusted you Iceman.`,
-    notify:()=>{fireToast('💔','SON ALERT','Terminal message sent. SON 💔');return 'Notification fired. SON 💔';}  ,
-    neofetch:()=>`\n  ██╗  ██╗██╗██████╗ ██████╗\n  ██║ ██╔╝██║██╔══██╗██╔══██╗\n  █████╔╝ ██║██║  ██║██║  ██║\n\n  OS: Kidd OS 1.0.0      User: ${acctUser}\n  Irvin: still gaming    Ninety01: still reposting\n  Iceman: hot and cold   SON: 💔`,
-    matrix:()=>'Wake up, '+acctUser+'... Ninety01 just reposted The Matrix.',
-    hack:()=>{const ls=['[*] Initializing...','[*] Scanning 247 ports...','[!] Exploiting CVE-0000-KIDD...','[!] ROOT ACCESS GRANTED','[*] Checking if Irvin is on games... affirmative.','[*] Ninety01 reposts intercepted: 89','[✓] Done. SON 💔 We are so back, '+acctUser+'.'];let i=0;const iv=setInterval(()=>{if(i<ls.length){aOut(ls[i]);i++;}else clearInterval(iv);},350);return null;},
+    clear:()=>{out.innerHTML='';return null;},games:()=>{openApp('games');return 'Launching Game Launcher...';},
+    notify:()=>{fireToast('💻','Terminal','Message sent from terminal. W move.');return 'Notification sent.';},
+    neofetch:()=>`\n  ██╗  ██╗██╗██████╗ ██████╗\n  ██║ ██╔╝██║██╔══██╗██╔══██╗\n  █████╔╝ ██║██║  ██║██║  ██║\n\n  OS: Kidd OS 1.0.0   User: ${acctUser}\n  Base: kiddinclass   Games: ${GAMES.length}`,
+    syfm:()=>{if(notifsMuted){notifsMuted=false;return'[SYFM] notifications back on. welcome to the noise.';}notifsMuted=true;return'[SYFM] notifications silenced. finally some peace 💔';},
+    matrix:()=>'Wake up, '+acctUser+'... The matrix has you.',
+    hack:()=>{const ls=['[*] Initializing...','[*] Scanning 247 ports...','[!] Exploiting CVE-0000-KIDD...','[!] ROOT ACCESS GRANTED','[✓] Done. We are so back, '+acctUser+'.'];let i=0;const iv=setInterval(()=>{if(i<ls.length){aOut(ls[i]);i++;}else clearInterval(iv);},350);return null;},
   };
   function aOut(t){out.textContent+=t+'\n';out.scrollTop=out.scrollHeight;}
   inp.addEventListener('keydown',e=>{
@@ -826,7 +847,7 @@ function buildTerm(el){
 function buildBrowser(el){
   el.innerHTML=`<div class="browser-app"><div class="app-bar"><button class="app-btn">←</button><button class="app-btn">→</button><button class="app-btn">↺</button><input class="br-url" id="burl" value="kidd://newtab"><button class="app-btn" id="bgo">↵</button></div><div class="br-body" id="bbody" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;"><div style="font-size:46px;opacity:0.15">🌐</div><div style="font-size:13px;color:var(--text3)">KIDD BROWSER</div><div style="font-size:11px;color:#1a4a1a;margin-top:4px">Type a URL and press Enter</div></div></div>`;
   const url=el.querySelector('#burl'),body=el.querySelector('#bbody');
-  function nav(){body.innerHTML=`<div style="font-size:40px;opacity:0.15">🔒</div><div style="font-size:12px;color:var(--text3)">Navigating: ${url.value}</div>`;}
+  function nav(){body.innerHTML=`<div style="font-size:40px;opacity:0.15">🔒</div><div style="font-size:12px;color:#3a7a3a">Navigating: ${url.value}</div><div style="font-size:10px;color:#1a4a1a;margin-top:4px">Secure mode active</div>`;}
   url.addEventListener('keydown',e=>{if(e.key==='Enter')nav();});el.querySelector('#bgo').onclick=nav;
 }
 
@@ -838,7 +859,6 @@ function buildNotes(el){
 
 /* ── CALCULATOR ── */
 function buildCalc(el){
-  setTimeout(()=>fireToast('🧮','CALCULATOR','first time someone was productive on this. 💔'),400);
   el.innerHTML=`<div class="calc-app"><div class="calc-display"><div class="calc-expr" id="c-expr"></div><div class="calc-val" id="c-val">0</div></div><div class="calc-grid" id="c-grid"></div></div>`;
   const disp=el.querySelector('#c-val'),expr=el.querySelector('#c-expr');
   let cur='0',prev='',op='',fresh=false;
@@ -940,7 +960,7 @@ function buildMusic(el){
   playBtn.onclick=togglePlay;
   el.querySelector('#mc-next').onclick=()=>{clearInterval(iv);iv=null;loadTrack((cur+1)%TRACKS.length);if(playing)iv=setInterval(tick,1000);};
   el.querySelector('#mc-prev').onclick=()=>{clearInterval(iv);iv=null;loadTrack((cur-1+TRACKS.length)%TRACKS.length);if(playing)iv=setInterval(tick,1000);};
-  el.querySelector('#mc-shuf').onclick=()=>{clearInterval(iv);iv=null;const r=Math.floor(Math.random()*TRACKS.length);loadTrack(r);if(playing)iv=setInterval(tick,1000);};
+  el.querySelector('#mc-shuf').onclick=()=>{clearInterval(iv);iv=null;const r=(cur+1+Math.floor(Math.random()*(TRACKS.length-1)))%TRACKS.length;loadTrack(r);if(playing)iv=setInterval(tick,1000);};
   el.querySelectorAll('.ml-item').forEach(li=>{li.onclick=()=>{clearInterval(iv);iv=null;loadTrack(parseInt(li.dataset.i));if(playing)iv=setInterval(tick,1000);};});
   el.querySelector('#mp-bar').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;prog=Math.floor(pct*durToSecs(TRACKS[cur].dur));};
 }
@@ -964,7 +984,7 @@ function buildSettings(el){
       <div class="set-row"><div><div class="set-lbl">Compact Taskbar</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>`,
     system:`<div class="set-title">SYSTEM</div>
       <div class="set-row"><div><div class="set-lbl">OS Version</div><div class="set-sub">Kidd OS 1.0.0 stable</div></div><span style="font-size:10px;color:var(--a2)">up to date</span></div>
-      <div class="set-row"><div><div class="set-lbl">User</div></div><span style="font-size:11px;color:var(--a)" id="sys-user-val">—</span></div>
+      <div class="set-row"><div><div class="set-lbl">User</div></div><span style="font-size:11px;color:var(--a)">${acctUser}</span></div>
       <div class="set-row"><div><div class="set-lbl">Base Project</div><div class="set-sub">kiddinclass game launcher</div></div></div>
       <div class="set-row"><div><div class="set-lbl">Auto-Updates</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
       <div class="set-row"><div><div class="set-lbl">Notifications</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>`,
@@ -976,7 +996,7 @@ function buildSettings(el){
       <div class="set-row"><div><div class="set-lbl">System Sounds</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
       <div class="set-row"><div><div class="set-lbl">Volume</div></div><input type="range" min="0" max="100" value="70" style="width:90px;accent-color:var(--a)"></div>
       <div class="set-row"><div><div class="set-lbl">Toast Sounds</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>`,
-    about:`<div class="set-title">ABOUT</div><div style="font-size:12px;color:var(--text2);line-height:1.85;padding-top:4px;"><b style="color:var(--a);font-family:'VT323',monospace;font-size:20px;">Kidd OS</b> v1.0.0<br><span style="color:var(--text3)">Spun off from <span style="color:var(--a2)">kiddinclass</span> game launcher.</span><br><span style="color:var(--text3)">Green. Black. Unhinged. Goated.</span><br><span style="color:var(--text3)">Irvin: still on the games.</span><br><span style="color:var(--text3)">Ninety01: reposted while you read this.</span><br><span style="color:var(--text3)">Iceman: hot and cold. SYFM 💔</span><br><br><span style="color:#1a4a1a">© 2024 Kidd OS Project // SON 💔</span></div>`,
+    about:`<div class="set-title">ABOUT</div><div style="font-size:12px;color:var(--text2);line-height:1.85;padding-top:4px;"><b style="color:var(--a);font-family:'VT323',monospace;font-size:20px;">Kidd OS</b> v1.0.0<br><span style="color:var(--text3)">Spun off from <span style="color:var(--a2)">kiddinclass</span> game launcher.</span><br><span style="color:var(--text3)">Green. Black. Unhinged. Goated.</span><br><br><span style="color:#1a4a1a">© 2024 Kidd OS Project</span></div>`,
   };
   el.innerHTML=`<div class="settings-app"><div class="set-nav">${[['appearance','🎨 Appearance'],['system','⚙️ System'],['network','🌐 Network'],['sound','🔊 Sound'],['about','ℹ️ About']].map((n,i)=>`<div class="set-nav-item${i===0?' on':''}" data-k="${n[0]}">${n[1]}</div>`).join('')}</div><div class="set-body" id="set-body">${panels['appearance']}</div></div>`;
   const body=el.querySelector('#set-body');
@@ -989,14 +1009,14 @@ function buildSettings(el){
       document.body.style.background=theme.bg;
       el.querySelectorAll('.theme-sw').forEach((x,j)=>x.classList.toggle('on',j===ti));
       const lbl=el.querySelector('#theme-label');if(lbl)lbl.textContent=theme.name;
-      fireToast('🎨','Theme','Switched to '+theme.name+'.');
+      fireToast('🎨','Theme','Switched to '+theme.name+'. W choice.');
     }
   });
   el.querySelectorAll('.set-nav-item').forEach(n=>{
     n.onclick=()=>{
       el.querySelectorAll('.set-nav-item').forEach(x=>x.classList.remove('on'));n.classList.add('on');
       const html=panels[n.dataset.k];body.innerHTML=typeof html==='function'?html():html;
-      if(n.dataset.k==='system'){const uv=body.querySelector('#sys-user-val');if(uv)uv.textContent=acctUser;}
+
     };
   });
 }
@@ -1006,12 +1026,237 @@ function buildAbout(el){
   el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
     <div style="font-family:'VT323',monospace;font-size:62px;color:var(--a);text-shadow:0 0 22px var(--a-glow);line-height:1;">KIDD OS</div>
     <div style="font-size:11px;color:var(--text3);letter-spacing:3px;">VERSION 1.0.0 // STABLE RELEASE</div>
-    <div style="font-size:12.5px;color:var(--text2);max-width:300px;line-height:1.7;">Logged in as <span style="color:var(--a)">${acctUser}</span>.<br>Spun off from <span style="color:var(--a2)">kiddinclass</span>.<br>9 apps. ${GAMES.length} games. No cap.<br><span style="color:var(--text3);font-size:11px;">Irvin: on the games (still)<br>Ninety01: reposting (always)<br>Iceman: hot and cold. SYFM 💔</span></div>
+    <div style="font-size:12.5px;color:var(--text2);max-width:270px;line-height:1.7;">Logged in as <span style="color:var(--a)">${acctUser}</span>.<br>Spun off from <span style="color:var(--a2)">kiddinclass</span>.<br>11 apps. ${GAMES.length} games. No cap.</div>
     <button onclick="openApp('games')" style="margin-top:10px;padding:9px 22px;background:rgba(0,255,65,0.13);border:1px solid var(--border2);color:var(--a);font-family:'VT323',monospace;font-size:19px;cursor:pointer;border-radius:4px;letter-spacing:2px;">▶ LAUNCH GAMES</button>
     <button onclick="openApp('music')" style="padding:7px 18px;background:transparent;border:1px solid var(--border);color:var(--text3);font-family:'VT323',monospace;font-size:16px;cursor:pointer;border-radius:4px;letter-spacing:1px;">🎵 MUSIC PLAYER</button>
-    <div style="font-size:10px;color:#1a4a1a;margin-top:4px;">SON 💔</div>
   </div>`;
 }
+/* ══════════════════════════════════════
+   PAINT APP
+══════════════════════════════════════ */
+function buildPaint(el){
+  el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;background:#000;">
+    <div class="app-bar" style="gap:8px;flex-wrap:wrap;">
+      <button class="app-btn paint-tool active-tool" data-tool="pen">✏️ Pen</button>
+      <button class="app-btn paint-tool" data-tool="eraser">⬜ Erase</button>
+      <button class="app-btn paint-tool" data-tool="fill">🪣 Fill</button>
+      <button class="app-btn paint-tool" data-tool="line">📏 Line</button>
+      <span style="font-size:10px;color:var(--text3);margin-left:4px;">SIZE:</span>
+      <input type="range" id="p-sz" min="1" max="40" value="4" style="width:65px;accent-color:var(--a);cursor:pointer;">
+      <div id="p-pal" style="display:flex;gap:3px;align-items:center;flex-wrap:wrap;"></div>
+      <input type="color" id="p-col" value="#00ff41" style="width:26px;height:26px;border:none;background:none;cursor:pointer;padding:0;border-radius:4px;">
+      <button class="app-btn" id="p-clr">🗑 Clear</button>
+      <button class="app-btn" id="p-sav">💾 Save</button>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0a0a0a;position:relative;" id="p-wrap">
+      <canvas id="p-cv" style="cursor:crosshair;display:block;"></canvas>
+    </div>
+    <div style="padding:3px 10px;border-top:1px solid rgba(0,255,65,0.1);font-size:10px;color:var(--text3);display:flex;gap:12px;">
+      <span id="p-xy">pos: 0, 0</span><span id="p-md">mode: pen</span>
+    </div>
+  </div>`;
+
+  const cv=el.querySelector('#p-cv'), ctx=cv.getContext('2d'), wrap=el.querySelector('#p-wrap');
+  function resz(){
+    const W=wrap.clientWidth-20,H=wrap.clientHeight-20;
+    const img=cv.width>10?ctx.getImageData(0,0,cv.width,cv.height):null;
+    cv.width=Math.max(W,100);cv.height=Math.max(H,100);
+    ctx.fillStyle='#0d0d0d';ctx.fillRect(0,0,cv.width,cv.height);
+    if(img)ctx.putImageData(img,0,0);
+  }
+  setTimeout(resz,40);
+
+  const PALS=['#00ff41','#00eeff','#ff4455','#ffcc00','#ff8800','#bf5fff','#ffffff','#aaaaaa','#444444','#000000','#ff69b4','#00cc33'];
+  const pal=el.querySelector('#p-pal');
+  let currentColor='#00ff41';
+  PALS.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText=`width:18px;height:18px;background:${c};border-radius:3px;cursor:pointer;border:2px solid ${i===0?'#fff':'transparent'};flex-shrink:0;box-sizing:border-box;`;
+    d.onclick=()=>{currentColor=c;el.querySelector('#p-col').value=c;pal.querySelectorAll('div').forEach(x=>x.style.borderColor='transparent');d.style.borderColor='#fff';};
+    pal.appendChild(d);
+  });
+
+  let tool='pen',brushSize=4,drawing=false,snap=null,sx=0,sy=0;
+  el.querySelectorAll('.paint-tool').forEach(b=>{
+    b.onclick=()=>{el.querySelectorAll('.paint-tool').forEach(x=>x.classList.remove('active-tool'));b.classList.add('active-tool');tool=b.dataset.tool;cv.style.cursor=tool==='eraser'?'cell':tool==='fill'?'default':'crosshair';el.querySelector('#p-md').textContent='mode: '+tool;};
+  });
+  el.querySelector('#p-sz').oninput=e=>brushSize=+e.target.value;
+  el.querySelector('#p-col').oninput=e=>{currentColor=e.target.value;pal.querySelectorAll('div').forEach(x=>x.style.borderColor='transparent');};
+  el.querySelector('#p-clr').onclick=()=>{ctx.fillStyle='#0d0d0d';ctx.fillRect(0,0,cv.width,cv.height);};
+  el.querySelector('#p-sav').onclick=()=>{const a=document.createElement('a');a.href=cv.toDataURL();a.download='kidd-paint.png';a.click();fireToast('💾','Paint','Artwork saved. Built different 🎨');};
+
+  function gp(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top];}
+  function fill(x,y,fc){
+    x=Math.round(x);y=Math.round(y);const idat=ctx.getImageData(0,0,cv.width,cv.height),d=idat.data;
+    const i0=(y*cv.width+x)*4,tr=d[i0],tg=d[i0+1],tb=d[i0+2],ta=d[i0+3];
+    const fr=parseInt(fc.slice(1,3),16),fg=parseInt(fc.slice(3,5),16),fb=parseInt(fc.slice(5,7),16);
+    if(tr===fr&&tg===fg&&tb===fb)return;
+    const stk=[[x,y]];
+    function match(i){return d[i]===tr&&d[i+1]===tg&&d[i+2]===tb&&d[i+3]===ta;}
+    let safe=0;
+    while(stk.length&&safe<80000){const[cx,cy]=stk.pop();safe++;const ci=(cy*cv.width+cx)*4;if(cx<0||cx>=cv.width||cy<0||cy>=cv.height||!match(ci))continue;d[ci]=fr;d[ci+1]=fg;d[ci+2]=fb;d[ci+3]=255;stk.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);}
+    ctx.putImageData(idat,0,0);
+  }
+  cv.addEventListener('mousedown',e=>{const[x,y]=gp(e);sx=x;sy=y;if(tool==='fill'){fill(x,y,currentColor);return;}drawing=true;if(tool==='line')snap=ctx.getImageData(0,0,cv.width,cv.height);ctx.beginPath();ctx.moveTo(x,y);});
+  cv.addEventListener('mousemove',e=>{const[x,y]=gp(e);el.querySelector('#p-xy').textContent=`pos: ${Math.round(x)}, ${Math.round(y)}`;if(!drawing)return;if(tool==='pen'||tool==='eraser'){ctx.globalCompositeOperation=tool==='eraser'?'destination-out':'source-over';ctx.strokeStyle=currentColor;ctx.lineWidth=brushSize;ctx.lineCap='round';ctx.lineJoin='round';ctx.lineTo(x,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);}else if(tool==='line'&&snap){ctx.putImageData(snap,0,0);ctx.globalCompositeOperation='source-over';ctx.strokeStyle=currentColor;ctx.lineWidth=brushSize;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(x,y);ctx.stroke();}});
+  cv.addEventListener('mouseup',()=>{drawing=false;ctx.globalCompositeOperation='source-over';ctx.beginPath();snap=null;});
+  cv.addEventListener('mouseleave',()=>{drawing=false;ctx.beginPath();});
+}
+document.head.insertAdjacentHTML('beforeend','<style>.active-tool{background:rgba(0,255,65,0.22)!important;color:var(--a)!important;border-color:rgba(0,255,65,0.55)!important;}</style>');
+
+/* ══════════════════════════════════════
+   SNAKE GAME
+══════════════════════════════════════ */
+function buildSnake(el){
+  el.innerHTML=`<div style="height:100%;display:flex;flex-direction:column;align-items:center;background:#000;gap:0;">
+    <div style="padding:8px 14px;width:100%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,255,65,0.12);">
+      <span style="font-family:'VT323',monospace;font-size:20px;color:var(--a);">🐍 SNAKE</span>
+      <span style="font-size:11px;color:var(--text3);">SCORE: <span id="sn-sc" style="color:var(--a)">0</span> &nbsp;|&nbsp; BEST: <span id="sn-hi" style="color:var(--a2)">0</span></span>
+      <button class="app-btn" id="sn-rst">↺ Restart</button>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:8px;">
+      <canvas id="sn-cv" style="border:1px solid rgba(0,255,65,0.22);border-radius:4px;image-rendering:pixelated;"></canvas>
+      <div style="font-size:11px;color:var(--text3);" id="sn-msg">Press <span style="color:var(--a)">SPACE</span> or click to start &nbsp;·&nbsp; Arrow keys / WASD</div>
+    </div>
+  </div>`;
+
+  const cv=el.querySelector('#sn-cv'),cx=cv.getContext('2d');
+  const CELL=18,COLS=22,ROWS=18;
+  cv.width=COLS*CELL;cv.height=ROWS*CELL;
+
+  let snake,dir,ndir,food,score,hi=0,running=false,dead=false,aid=null,last=0;
+
+  function rn(n){return Math.floor(Math.random()*n);}
+  function init(){
+    snake=[{x:11,y:9},{x:10,y:9},{x:9,y:9}];
+    dir={x:1,y:0};ndir={x:1,y:0};score=0;dead=false;
+    el.querySelector('#sn-sc').textContent='0';
+    spawnFood();draw();
+    el.querySelector('#sn-msg').textContent='Press SPACE or click to start · Arrow keys / WASD';
+  }
+  function spawnFood(){do{food={x:rn(COLS),y:rn(ROWS)};}while(snake.some(s=>s.x===food.x&&s.y===food.y));}
+
+  function draw(){
+    cx.fillStyle='#050d05';cx.fillRect(0,0,cv.width,cv.height);
+    // grid
+    cx.fillStyle='rgba(0,255,65,0.04)';
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)cx.fillRect(c*CELL+CELL/2-1,r*CELL+CELL/2-1,2,2);
+    // food
+    const p=Math.sin(Date.now()/200)*0.3+0.7;
+    cx.fillStyle=`rgba(255,70,70,${p})`;cx.shadowBlur=12;cx.shadowColor='#ff3333';
+    cx.beginPath();cx.arc(food.x*CELL+CELL/2,food.y*CELL+CELL/2,CELL/2-2,0,Math.PI*2);cx.fill();
+    cx.shadowBlur=0;
+    // snake body
+    snake.forEach((s,i)=>{
+      const a=1-i/snake.length*0.6;
+      cx.fillStyle=i===0?`rgba(0,255,65,${a})`:`rgba(0,185,45,${a})`;
+      cx.shadowBlur=i===0?10:0;cx.shadowColor='#00ff41';
+      const r=i===0?4:3;
+      cx.fillRect(s.x*CELL+1,s.y*CELL+1,CELL-2,CELL-2);
+      cx.shadowBlur=0;
+      if(i===0){
+        cx.fillStyle='#001800';
+        const ox=dir.x===1?9:dir.x===-1?3:dir.y===0?6:6;
+        const oy=dir.y===1?9:dir.y===-1?3:dir.x===0?6:6;
+        cx.fillRect(s.x*CELL+ox-dir.y*3,s.y*CELL+oy+dir.x*3,3,3);
+        cx.fillRect(s.x*CELL+ox+dir.y*3,s.y*CELL+oy-dir.x*3,3,3);
+      }
+    });
+    if(dead){
+      cx.fillStyle='rgba(0,0,0,0.7)';cx.fillRect(0,0,cv.width,cv.height);
+      cx.fillStyle='#ff5555';cx.font="30px 'VT323',monospace";cx.textAlign='center';
+      cx.fillText('GAME OVER 💀',cv.width/2,cv.height/2-16);
+      cx.fillStyle='#7ab07a';cx.font="15px 'Share Tech Mono',monospace";
+      cx.fillText(`Score: ${score}  |  Best: ${hi}`,cv.width/2,cv.height/2+12);
+      cx.fillStyle='#3a6a3a';cx.font="12px 'Share Tech Mono',monospace";
+      cx.fillText('space / click to retry',cv.width/2,cv.height/2+34);
+      cx.textAlign='left';
+    }
+  }
+
+  function step(){
+    dir={...ndir};
+    const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS||snake.some(s=>s.x===head.x&&s.y===head.y)){
+      dead=true;running=false;cancelAnimationFrame(aid);
+      if(score>hi){hi=score;el.querySelector('#sn-hi').textContent=hi;}
+      fireToast('💀','Snake','Game over. Score: '+score+'. SON 💔');
+      draw();return;
+    }
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){score++;el.querySelector('#sn-sc').textContent=score;spawnFood();if(score%5===0)fireToast('🐍','Snake','Score '+score+'! bro is NOT cooked.');}
+    else snake.pop();
+    draw();
+  }
+
+  const spd=()=>Math.max(55,155-score*4);
+  function loop(ts){if(!running)return;if(ts-last>spd()){last=ts;step();}aid=requestAnimationFrame(loop);}
+
+  function go(){if(dead||!running){init();running=true;el.querySelector('#sn-msg').textContent='';aid=requestAnimationFrame(loop);}}
+
+  const km={ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0},w:{x:0,y:-1},s:{x:0,y:1},a:{x:-1,y:0},d:{x:1,y:0}};
+  const kh=e=>{if(e.key===' '){e.preventDefault();go();return;}const nd=km[e.key];if(nd&&running&&!(nd.x===-dir.x&&!nd.y)&&!(nd.y===-dir.y&&!nd.x))ndir={...nd};};
+  document.addEventListener('keydown',kh);
+  const obs=new MutationObserver(()=>{if(!document.contains(cv)){cancelAnimationFrame(aid);running=false;document.removeEventListener('keydown',kh);obs.disconnect();}});
+  obs.observe(document.body,{childList:true,subtree:true});
+  cv.onclick=go;
+  el.querySelector('#sn-rst').onclick=()=>{cancelAnimationFrame(aid);aid=null;running=false;dead=false;go();};
+  init();
+}
+
+/* ══════════════════════════════════════
+   DESKTOP WIDGETS
+══════════════════════════════════════ */
+function spawnDesktopWidgets(){
+  const desk=document.getElementById('desktop');
+
+  // ── Clock widget
+  const cw=document.createElement('div');
+  cw.style.cssText='position:absolute;right:16px;top:16px;background:rgba(3,10,3,0.9);border:1px solid rgba(0,255,65,0.22);border-radius:10px;padding:12px 18px;text-align:center;backdrop-filter:blur(8px);cursor:move;z-index:10;min-width:140px;';
+  cw.innerHTML=`<div id="wc-t" style="font-family:'VT323',monospace;font-size:46px;color:var(--a);text-shadow:0 0 16px var(--a-glow);line-height:1;letter-spacing:2px;"></div>
+    <div id="wc-d" style="font-size:10px;color:var(--text3);margin-top:3px;letter-spacing:1px;"></div>`;
+  desk.appendChild(cw);makeDraggableIcon(cw);
+  function updClock(){
+    const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+    const DAYS=['SUN','MON','TUE','WED','THU','FRI','SAT'],MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const ct=document.getElementById('wc-t'),cd=document.getElementById('wc-d');
+    if(ct)ct.textContent=`${h}:${m}:${s}`;
+    if(cd)cd.textContent=`${DAYS[n.getDay()]} ${MONTHS[n.getMonth()]} ${n.getDate()} ${n.getFullYear()}`;
+  }
+  updClock();setInterval(updClock,1000);
+
+  // ── System stats widget
+  const sw=document.createElement('div');
+  sw.style.cssText='position:absolute;right:16px;top:158px;background:rgba(3,10,3,0.9);border:1px solid rgba(0,255,65,0.22);border-radius:10px;padding:12px 14px;backdrop-filter:blur(8px);cursor:move;z-index:10;min-width:160px;';
+  sw.innerHTML=`<div style="font-family:'VT323',monospace;font-size:14px;color:var(--a2);letter-spacing:2px;margin-bottom:8px;">SYS STATS</div>
+    ${['cpu','ram','disk'].map(k=>`<div style="margin-bottom:7px;"><div style="font-size:10px;color:var(--text3);display:flex;justify-content:space-between;margin-bottom:2px;"><span>${k.toUpperCase()}</span><span id="ws-${k}">--</span></div><div style="height:4px;background:rgba(0,255,65,0.1);border-radius:2px;"><div id="ws-${k}-b" style="height:100%;border-radius:2px;transition:width 0.9s,background 0.4s;width:0%;background:var(--a);"></div></div></div>`).join('')}
+    <div style="font-size:9px;color:var(--text3);border-top:1px solid rgba(0,255,65,0.08);padding-top:6px;display:flex;justify-content:space-between;"><span>UPTIME</span><span id="ws-up">0s</span></div>`;
+  desk.appendChild(sw);makeDraggableIcon(sw);
+  let up=0;const diskBase=Math.round(35+Math.random()*25);
+  setInterval(()=>{
+    up++;const cpu=Math.round(12+Math.random()*55),ram=Math.round(30+Math.random()*35),disk=Math.min(99,diskBase+Math.round(up/60));
+    [{k:'cpu',v:cpu},{k:'ram',v:ram},{k:'disk',v:disk}].forEach(({k,v})=>{
+      const lbl=document.getElementById('ws-'+k),bar=document.getElementById('ws-'+k+'-b');
+      if(lbl)lbl.textContent=v+'%';
+      if(bar){bar.style.width=v+'%';bar.style.background=v>75?'#ff4444':v>55?'#ffaa00':'#00ff41';}
+    });
+    const uEl=document.getElementById('ws-up');if(uEl){const m=Math.floor(up/60),s=up%60;uEl.textContent=m>0?`${m}m ${s}s`:`${s}s`;}
+  },2200);
+
+  // ── Quote widget
+  const qw=document.createElement('div');
+  qw.style.cssText='position:absolute;right:16px;top:350px;background:rgba(3,10,3,0.9);border:1px solid rgba(0,255,65,0.22);border-radius:10px;padding:12px 14px;backdrop-filter:blur(8px);cursor:move;z-index:10;max-width:192px;';
+  const QS=["SON 💔","Ninety01 be reposting anything","W Speed. picks up water.","Iceman was a nice man. now he hot and cold.","say wallahi bro say wallahi","Irvin did it.","HOW DID HE NOT GET A BREACH????","1 day or day 1?","OFF THE GAMES.","I LOVE THE TASTE OF IRON.","stop talking please.","who is he?"];
+  let qi=Math.floor(Math.random()*QS.length);
+  qw.innerHTML=`<div style="font-family:'VT323',monospace;font-size:13px;color:var(--a2);letter-spacing:2px;margin-bottom:7px;">QUOTE</div>
+    <div id="wq-txt" style="font-size:11px;color:var(--text2);line-height:1.6;">${QS[qi]}</div>
+    <div style="font-size:9px;color:var(--text3);margin-top:8px;cursor:pointer;text-decoration:underline;" onclick="window.__nxtQ&&window.__nxtQ()">next →</div>`;
+  desk.appendChild(qw);makeDraggableIcon(qw);
+  window.__nxtQ=()=>{qi=(qi+1)%QS.length;const e=document.getElementById('wq-txt');if(e)e.textContent=QS[qi];};
+  // auto-rotate quote every 30s
+  setInterval(()=>window.__nxtQ&&window.__nxtQ(),30000);
+}
+
 </script>
 </body>
 </html>
